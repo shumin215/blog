@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '@layouts/BaseLayout.astro';
+import { url } from '@utils/url';
 
 const posts = await getCollection('posts', ({ data }) => !data.draft);
 
@@ -26,7 +27,7 @@ const tags = Object.entries(tagMap).sort((a, b) => b[1] - a[1]);
         <div class="flex flex-wrap gap-3">
           {tags.map(([tag, count]) => (
             <a
-              href={`/tags/${tag}`}
+              href={url(`/tags/${tag}`)}
               class="flex items-center gap-1.5 px-4 py-2 rounded-full border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all group"
             >
               <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-600">

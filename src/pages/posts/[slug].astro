@@ -4,6 +4,7 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import Callout from '@components/Callout.astro';
 import ImageCaption from '@components/ImageCaption.astro';
 import { getReadingTime } from '@utils/readingTime';
+import { url } from '@utils/url';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts', ({ data }) => !data.draft);
@@ -41,7 +42,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
         {
           post.data.tags.map((tag) => (
             <a
-              href={`/tags/${tag}`}
+              href={url(`/tags/${tag}`)}
               class="text-xs font-medium px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"
             >
               #{tag}
@@ -106,7 +107,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
       <div>
         {
           prevPost && (
-            <a href={`/posts/${prevPost.id}`} class="group block">
+            <a href={url(`/posts/${prevPost.id}`)} class="group block">
               <p class="text-xs text-gray-400 mb-1">← 이전 글</p>
               <p class="text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors line-clamp-2">
                 {prevPost.data.title}
@@ -118,7 +119,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
       <div class="text-right">
         {
           nextPost && (
-            <a href={`/posts/${nextPost.id}`} class="group block">
+            <a href={url(`/posts/${nextPost.id}`)} class="group block">
               <p class="text-xs text-gray-400 mb-1">다음 글 →</p>
               <p class="text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors line-clamp-2">
                 {nextPost.data.title}

@@ -1,8 +1,10 @@
 ---
+import { url } from '@utils/url';
+
 const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/tags', label: 'Tags' },
-  { href: '/about', label: 'About' },
+  { href: url('/'), label: 'Home' },
+  { href: url('/tags'), label: 'Tags' },
+  { href: url('/about'), label: 'About' },
 ];
 
 const currentPath = Astro.url.pathname;
@@ -11,7 +13,7 @@ const currentPath = Astro.url.pathname;
 <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100">
   <nav class="w-full max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
     <!-- Logo -->
-    <a href="/" class="text-lg font-bold text-gray-900 hover:text-indigo-600 transition-colors">
+    <a href={url('/')} class="text-lg font-bold text-gray-900 hover:text-indigo-600 transition-colors">
       Shumin's World
     </a>
 
