@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://shumin215.github.io/blog/sitemap-index.xml
+Sitemap: https://your-domain.com/sitemap-index.xml

@@ -7,10 +7,8 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // 커스텀 도메인 연결 전: https://shumin215.github.io/blog
-  // 커스텀 도메인 연결 후: 실제 도메인으로 변경
-  site: 'https://shumin215.github.io',
-  base: '/blog',
+  // 커스텀 도메인 연결 후 실제 도메인으로 변경
+  site: 'https://your-domain.com',
 
   markdown: {
     shikiConfig: {
