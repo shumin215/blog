@@ -1,0 +1,29 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PostCard from '@components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+const posts = allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="Home">
+  <section>
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">Shumin's World</h1>
+    <p class="text-gray-500 mb-10">개발 경험과 배움을 기록하는 공간입니다.</p>
+
+    <div class="flex flex-col gap-4">
+      {
+        posts.map((post) => (
+          <PostCard
+            title={post.data.title}
+            date={post.data.date}
+            description={post.data.description}
+            tags={post.data.tags}
+            slug={post.id}
+          />
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

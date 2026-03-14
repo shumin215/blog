@@ -1,0 +1,38 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="About" description="Shumin에 대해 소개합니다.">
+  <section class="prose prose-gray max-w-none
+    prose-headings:font-semibold prose-headings:text-gray-900
+    prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:underline">
+
+    <h1>About</h1>
+
+    <p>
+      안녕하세요, <strong>Shumin</strong>입니다.
+      개발하면서 배운 것들을 이 블로그에 기록하고 있습니다.
+    </p>
+
+    <h2>관심 분야</h2>
+    <ul>
+      <li>백엔드 / 시스템 엔지니어링</li>
+      <li>DevOps & 인프라 (Docker, GitHub Actions)</li>
+      <li>웹 프론트엔드 (Astro, React)</li>
+    </ul>
+
+    <h2>이 블로그에 대해</h2>
+    <p>
+      <strong>Shumin's World</strong>는 Astro + MDX + Tailwind CSS로 만들어졌으며,
+      Docker 컨테이너 기반으로 셀프 호스팅 환경에서 운영됩니다.
+      GitHub Actions를 통해 코드 push 시 자동으로 빌드 및 배포됩니다.
+    </p>
+
+    <h2>연락처</h2>
+    <ul>
+      <li>
+        GitHub: <a href="https://github.com" target="_blank" rel="noopener noreferrer">github.com</a>
+      </li>
+    </ul>
+  </section>
+</BaseLayout>
