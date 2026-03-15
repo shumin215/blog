@@ -191,27 +191,31 @@ const currentPath = Astro.url.pathname;
     document.body.style.overflow = 'hidden';
 
     if (!pagefindInitialized) {
-      // Load pagefind CSS dynamically
-      if (!document.querySelector('link[data-pagefind]')) {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = '/pagefind/pagefind-ui.css';
-        link.dataset.pagefind = 'true';
-        document.head.appendChild(link);
-      }
+      await new Promise<void>((resolve, reject) => {
+        // Load CSS
+        if (!document.querySelector('link[data-pagefind]')) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = '/pagefind/pagefind-ui.css';
+          link.dataset.pagefind = 'true';
+          document.head.appendChild(link);
+        }
 
-      try {
-        const { PagefindUI } = await import('/pagefind/pagefind-ui.js');
-        new PagefindUI({
-          element: '#search-container',
-          showImages: false,
-          showEmptyFilters: false,
-          resetStyles: false,
-        });
-        pagefindInitialized = true;
-      } catch (e) {
-        console.error('Pagefind failed to load:', e);
-      }
+        // Load JS as script tag (pagefind-ui is an IIFE bundle, not an ES module)
+        const script = document.createElement('script');
+        script.src = '/pagefind/pagefind-ui.js';
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Failed to load pagefind-ui.js'));
+        document.head.appendChild(script);
+      });
+
+      new (window as any).PagefindUI({
+        element: '#search-container',
+        showImages: false,
+        showEmptyFilters: false,
+        resetStyles: false,
+      });
+      pagefindInitialized = true;
     }
 
     // Focus input after render
