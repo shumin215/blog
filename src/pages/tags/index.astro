@@ -5,7 +5,6 @@ import { url } from '@utils/url';
 
 const posts = await getCollection('posts', ({ data }) => !data.draft);
 
-// 태그별 포스트 수 집계
 const tagMap = posts.reduce<Record<string, number>>((acc, post) => {
   for (const tag of post.data.tags) {
     acc[tag] = (acc[tag] ?? 0) + 1;
@@ -18,22 +17,22 @@ const tags = Object.entries(tagMap).sort((a, b) => b[1] - a[1]);
 
 <BaseLayout title="Tags" description="포스트 태그 목록">
   <section>
-    <h1 class="text-2xl font-bold text-gray-900 mb-8">Tags</h1>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8">Tags</h1>
 
     {
       tags.length === 0 ? (
-        <p class="text-gray-400">아직 태그가 없습니다.</p>
+        <p class="text-gray-400 dark:text-gray-500">아직 태그가 없습니다.</p>
       ) : (
         <div class="flex flex-wrap gap-3">
           {tags.map(([tag, count]) => (
             <a
               href={url(`/tags/${tag}`)}
-              class="flex items-center gap-1.5 px-4 py-2 rounded-full border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all group"
+              class="flex items-center gap-1.5 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-all group"
             >
-              <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-600">
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
                 #{tag}
               </span>
-              <span class="text-xs text-gray-400 group-hover:text-indigo-400">{count}</span>
+              <span class="text-xs text-gray-400 dark:text-gray-500 group-hover:text-indigo-400">{count}</span>
             </a>
           ))}
         </div>

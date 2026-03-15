@@ -1,6 +1,61 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Enable class-based dark mode for Tailwind v4 */
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Shiki dual theme: light mode uses --shiki-light, dark mode uses --shiki-dark */
+.astro-code,
+.astro-code span {
+  color: var(--shiki-light) !important;
+  background-color: var(--shiki-light-bg) !important;
+  font-style: var(--shiki-light-font-style) !important;
+  font-weight: var(--shiki-light-font-weight) !important;
+}
+
+.dark .astro-code,
+.dark .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+}
+
+/* Code block copy button */
+.code-block-wrapper {
+  position: relative;
+}
+
+.copy-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: 0.25rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: all 0.15s;
+  opacity: 0;
+}
+
+.code-block-wrapper:hover .copy-button {
+  opacity: 1;
+}
+
+.copy-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #e5e7eb;
+}
+
+.copy-button.copied {
+  color: #34d399;
+  border-color: #34d399;
+  opacity: 1;
 }

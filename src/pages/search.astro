@@ -1,0 +1,41 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Search" description="블로그 포스트 검색">
+  <section>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8">Search</h1>
+
+    <!-- Pagefind UI is generated at build time into /pagefind/ -->
+    <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+    <div id="search"></div>
+
+    <style>
+      /* Override pagefind UI colors for dark mode */
+      .dark #search {
+        --pagefind-ui-scale: 1;
+        --pagefind-ui-primary: #818cf8;
+        --pagefind-ui-text: #e2e8f0;
+        --pagefind-ui-background: #111827;
+        --pagefind-ui-border: #374151;
+        --pagefind-ui-tag: #1f2937;
+      }
+    </style>
+  </section>
+</BaseLayout>
+
+<script>
+  // Initialize pagefind UI after DOM is ready
+  // pagefind-ui.js is generated at build time
+  async function initSearch() {
+    const { PagefindUI } = await import('/pagefind/pagefind-ui.js');
+    new PagefindUI({
+      element: '#search',
+      showImages: false,
+      showEmptyFilters: false,
+      resetStyles: false,
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initSearch);
+</script>

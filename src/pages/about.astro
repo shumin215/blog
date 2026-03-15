@@ -3,9 +3,9 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="About" description="Shumin에 대해 소개합니다.">
-  <section class="prose prose-gray max-w-none
-    prose-headings:font-semibold prose-headings:text-gray-900
-    prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:underline">
+  <section class="prose prose-gray dark:prose-invert max-w-none
+    prose-headings:font-semibold prose-headings:text-gray-900 dark:prose-headings:text-gray-100
+    prose-a:text-indigo-600 dark:prose-a:text-indigo-400 prose-a:no-underline hover:prose-a:underline">
 
     <h1>About</h1>
 
@@ -24,14 +24,14 @@ import BaseLayout from '@layouts/BaseLayout.astro';
     <h2>이 블로그에 대해</h2>
     <p>
       <strong>Shumin's World</strong>는 Astro + MDX + Tailwind CSS로 만들어졌으며,
-      Docker 컨테이너 기반으로 셀프 호스팅 환경에서 운영됩니다.
+      Cloudflare Pages에 배포되어 운영됩니다.
       GitHub Actions를 통해 코드 push 시 자동으로 빌드 및 배포됩니다.
     </p>
 
     <h2>연락처</h2>
     <ul>
       <li>
-        GitHub: <a href="https://github.com" target="_blank" rel="noopener noreferrer">github.com</a>
+        GitHub: <a href="https://github.com/shumin215" target="_blank" rel="noopener noreferrer">github.com/shumin215</a>
       </li>
     </ul>
   </section>

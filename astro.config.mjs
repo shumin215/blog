@@ -7,19 +7,29 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // 커스텀 도메인 연결 후 실제 도메인으로 변경
+  // Update to actual domain after custom domain setup
   site: 'https://your-domain.com',
 
   markdown: {
     shikiConfig: {
-      theme: 'github-light',
+      // Dual themes: light/dark switch via .dark class on <html>
+      themes: {
+        light: 'github-light',
+        dark: 'github-dark',
+      },
       wrap: true,
     },
   },
 
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    build: {
+      rollupOptions: {
+        // pagefind assets are generated after build, so exclude from bundle resolution
+        external: ['/pagefind/pagefind-ui.js'],
+      },
+    },
   },
 
-  integrations: [mdx(), sitemap()]
+  integrations: [mdx(), sitemap()],
 });

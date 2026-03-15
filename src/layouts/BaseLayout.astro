@@ -55,8 +55,23 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Dark mode: set class before paint to prevent flash -->
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (stored === 'dark' || (!stored && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+
+    <!-- Cloudflare Web Analytics -->
+    <!-- TODO: Replace YOUR_BEACON_TOKEN with token from Cloudflare dashboard -->
+    <!-- <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "YOUR_BEACON_TOKEN"}'></script> -->
   </head>
-  <body class="min-h-screen bg-white text-gray-900 font-sans antialiased">
+  <body class="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased transition-colors duration-200">
     <div class="flex flex-col min-h-screen">
       <Header />
       <main class="flex-1 w-full max-w-3xl mx-auto px-4 sm:px-6 py-10">
@@ -64,5 +79,38 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
       </main>
       <Footer />
     </div>
+
+    <!-- Code block copy button -->
+    <script>
+      function initCopyButtons() {
+        document.querySelectorAll('pre').forEach((pre) => {
+          if (pre.parentElement?.classList.contains('code-block-wrapper')) return;
+
+          const wrapper = document.createElement('div');
+          wrapper.className = 'code-block-wrapper';
+          pre.parentNode?.insertBefore(wrapper, pre);
+          wrapper.appendChild(pre);
+
+          const button = document.createElement('button');
+          button.className = 'copy-button';
+          button.textContent = 'Copy';
+          button.setAttribute('aria-label', 'Copy code to clipboard');
+          wrapper.appendChild(button);
+
+          button.addEventListener('click', async () => {
+            const code = pre.querySelector('code')?.innerText ?? pre.innerText;
+            await navigator.clipboard.writeText(code);
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+            setTimeout(() => {
+              button.textContent = 'Copy';
+              button.classList.remove('copied');
+            }, 2000);
+          });
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', initCopyButtons);
+    </script>
   </body>
 </html>

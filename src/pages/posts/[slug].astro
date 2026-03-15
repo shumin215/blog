@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '@layouts/BaseLayout.astro';
 import Callout from '@components/Callout.astro';
 import ImageCaption from '@components/ImageCaption.astro';
+import Comments from '@components/Comments.astro';
 import { getReadingTime } from '@utils/readingTime';
 import { url } from '@utils/url';
 
@@ -22,7 +23,7 @@ const formattedDate = post.data.date.toLocaleDateString('ko-KR', {
   day: 'numeric',
 });
 
-// 이전/다음 포스트
+// Previous/next posts
 const allPosts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
@@ -30,54 +31,54 @@ const currentIndex = allPosts.findIndex((p) => p.id === post.id);
 const prevPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
 const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
 
-// TOC: h2, h3만 추출
+// TOC: h2 and h3 only
 const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description} ogImage={post.data.cover}>
   <article>
-    <!-- 포스트 헤더 -->
-    <header class="mb-8 pb-8 border-b border-gray-100">
+    <!-- Post header -->
+    <header class="mb-8 pb-8 border-b border-gray-100 dark:border-gray-800">
       <div class="flex flex-wrap gap-1.5 mb-3">
         {
           post.data.tags.map((tag) => (
             <a
               href={url(`/tags/${tag}`)}
-              class="text-xs font-medium px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"
+              class="text-xs font-medium px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors"
             >
               #{tag}
             </a>
           ))
         }
       </div>
-      <h1 class="text-3xl font-bold text-gray-900 leading-snug mb-3">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 leading-snug mb-3">
         {post.data.title}
       </h1>
-      <div class="flex items-center gap-3 text-sm text-gray-400">
+      <div class="flex items-center gap-3 text-sm text-gray-400 dark:text-gray-500">
         <time datetime={post.data.date.toISOString()}>{formattedDate}</time>
         <span>·</span>
         <span>{readingTime}분 읽기</span>
       </div>
     </header>
 
-    <!-- 본문 레이아웃: TOC + 콘텐츠 -->
+    <!-- Body layout: TOC + content -->
     <div class="relative lg:flex lg:gap-10">
-      <!-- 본문 -->
-      <div class="prose prose-gray max-w-none flex-1 min-w-0
-        prose-headings:font-semibold prose-headings:text-gray-900
-        prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:underline
-        prose-code:text-indigo-600 prose-code:bg-indigo-50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-normal
+      <!-- Content -->
+      <div class="prose prose-gray dark:prose-invert max-w-none flex-1 min-w-0
+        prose-headings:font-semibold prose-headings:text-gray-900 dark:prose-headings:text-gray-100
+        prose-a:text-indigo-600 dark:prose-a:text-indigo-400 prose-a:no-underline hover:prose-a:underline
+        prose-code:text-indigo-600 dark:prose-code:text-indigo-400 prose-code:bg-indigo-50 dark:prose-code:bg-indigo-950 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-normal
         prose-pre:bg-gray-900 prose-pre:text-gray-100
-        prose-blockquote:border-indigo-300 prose-blockquote:text-gray-600">
+        prose-blockquote:border-indigo-300 dark:prose-blockquote:border-indigo-700 prose-blockquote:text-gray-600 dark:prose-blockquote:text-gray-400">
         <Content components={{ Callout, ImageCaption }} />
       </div>
 
-      <!-- TOC (데스크탑 사이드바) -->
+      <!-- TOC (desktop sidebar) -->
       {
         tocHeadings.length > 0 && (
           <aside class="hidden lg:block w-56 shrink-0">
             <div class="sticky top-20">
-              <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+              <p class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
                 목차
               </p>
               <nav>
@@ -86,7 +87,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
                     <li>
                       <a
                         href={`#${h.slug}`}
-                        class={`block text-sm text-gray-500 hover:text-indigo-600 transition-colors leading-snug ${
+                        class={`block text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors leading-snug ${
                           h.depth === 3 ? 'pl-3' : ''
                         }`}
                       >
@@ -102,14 +103,14 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
       }
     </div>
 
-    <!-- 이전/다음 포스트 -->
-    <nav class="mt-12 pt-8 border-t border-gray-100 grid grid-cols-2 gap-4">
+    <!-- Previous/next posts -->
+    <nav class="mt-12 pt-8 border-t border-gray-100 dark:border-gray-800 grid grid-cols-2 gap-4">
       <div>
         {
           prevPost && (
             <a href={url(`/posts/${prevPost.id}`)} class="group block">
-              <p class="text-xs text-gray-400 mb-1">← 이전 글</p>
-              <p class="text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors line-clamp-2">
+              <p class="text-xs text-gray-400 dark:text-gray-500 mb-1">← 이전 글</p>
+              <p class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
                 {prevPost.data.title}
               </p>
             </a>
@@ -120,8 +121,8 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
         {
           nextPost && (
             <a href={url(`/posts/${nextPost.id}`)} class="group block">
-              <p class="text-xs text-gray-400 mb-1">다음 글 →</p>
-              <p class="text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors line-clamp-2">
+              <p class="text-xs text-gray-400 dark:text-gray-500 mb-1">다음 글 →</p>
+              <p class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
                 {nextPost.data.title}
               </p>
             </a>
@@ -129,5 +130,8 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
         }
       </div>
     </nav>
+
+    <!-- Comments -->
+    <Comments />
   </article>
 </BaseLayout>
