@@ -153,51 +153,13 @@ const currentPath = Astro.url.pathname;
     overflow-y: auto;
   }
 
-  /* Dark mode: CSS variables */
+  /* Dark mode CSS variables (applied before pagefind CSS loads) */
   .dark #search-container {
     --pagefind-ui-primary: #818cf8;
     --pagefind-ui-text: #f1f5f9;
     --pagefind-ui-background: #1e293b;
     --pagefind-ui-border: #475569;
     --pagefind-ui-tag: #334155;
-  }
-
-  /* Dark mode: explicit overrides for all text elements */
-  .dark #search-container .pagefind-ui__result-title,
-  .dark #search-container .pagefind-ui__result-title a {
-    color: #f1f5f9 !important;
-  }
-
-  .dark #search-container .pagefind-ui__result-excerpt {
-    color: #f1f5f9 !important;
-  }
-
-  .dark #search-container .pagefind-ui__result-excerpt mark {
-    color: #1e293b !important;
-    background-color: #818cf8 !important;
-  }
-
-  .dark #search-container .pagefind-ui__message {
-    color: #94a3b8 !important;
-  }
-
-  .dark #search-container .pagefind-ui__search-input {
-    color: #f1f5f9 !important;
-    background-color: #1e293b !important;
-    border-color: #475569 !important;
-  }
-
-  .dark #search-container .pagefind-ui__search-input::placeholder {
-    color: #64748b !important;
-  }
-
-  .dark #search-container .pagefind-ui__result {
-    border-color: #334155 !important;
-  }
-
-  .dark #search-container .pagefind-ui__button {
-    color: #818cf8 !important;
-    border-color: #818cf8 !important;
   }
 </style>
 
@@ -248,6 +210,24 @@ const currentPath = Astro.url.pathname;
         script.onerror = () => reject(new Error('Failed to load pagefind-ui.js'));
         document.head.appendChild(script);
       });
+
+      // Inject dark mode overrides AFTER pagefind CSS so they take precedence
+      if (!document.querySelector('style[data-pagefind-dark]')) {
+        const style = document.createElement('style');
+        style.dataset.pagefindDark = 'true';
+        style.textContent = `
+          .dark .pagefind-ui__result-title,
+          .dark .pagefind-ui__result-title a { color: #f1f5f9 !important; }
+          .dark .pagefind-ui__result-excerpt { color: #f1f5f9 !important; }
+          .dark .pagefind-ui__result-excerpt mark { color: #0f172a !important; background-color: #818cf8 !important; }
+          .dark .pagefind-ui__message { color: #94a3b8 !important; }
+          .dark .pagefind-ui__search-input { color: #f1f5f9 !important; background-color: #1e293b !important; border-color: #475569 !important; }
+          .dark .pagefind-ui__search-input::placeholder { color: #64748b !important; }
+          .dark .pagefind-ui__result { border-color: #334155 !important; }
+          .dark .pagefind-ui__button { color: #818cf8 !important; border-color: #818cf8 !important; background: transparent !important; }
+        `;
+        document.head.appendChild(style);
+      }
 
       new (window as any).PagefindUI({
         element: '#search-container',
