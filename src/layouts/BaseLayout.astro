@@ -7,12 +7,14 @@ interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  wide?: boolean;
 }
 
 const {
   title,
   description = "Shumin's World — 개발 경험과 배움을 기록하는 블로그",
   ogImage,
+  wide = false,
 } = Astro.props;
 
 const siteUrl = Astro.site ?? 'https://your-domain.com';
@@ -74,7 +76,7 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
   <body class="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased transition-colors duration-200">
     <div class="flex flex-col min-h-screen">
       <Header />
-      <main class="flex-1 w-full max-w-3xl mx-auto px-4 sm:px-6 py-10">
+      <main class={`flex-1 w-full ${wide ? 'max-w-5xl' : 'max-w-3xl'} mx-auto px-4 sm:px-6 py-10`}>
         <slot />
       </main>
       <Footer />
