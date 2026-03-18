@@ -227,10 +227,7 @@ const currentPath = Astro.url.pathname;
           .dark .pagefind-ui__result { border-color: #334155 !important; }
           .dark .pagefind-ui__button { color: #818cf8 !important; border-color: #818cf8 !important; background: transparent !important; }
           .pagefind-ui__search-clear {
-            text-align: center !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
+            padding: 0 calc(15px * var(--pagefind-ui-scale, 0.8)) !important;
           }
         `;
         document.head.appendChild(style);
