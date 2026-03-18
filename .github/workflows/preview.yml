@@ -1,0 +1,82 @@
+name: PR Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  preview:
+    name: Build & Deploy Preview
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy Preview to Cloudflare Pages
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy ./dist --project-name=blog --branch=${{ github.head_ref }}
+
+      - name: Comment PR with Preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deploymentUrl = '${{ steps.deploy.outputs.deployment-url }}';
+            const branchName = '${{ github.head_ref }}';
+            const sha = '${{ github.event.pull_request.head.sha }}'.substring(0, 7);
+
+            const body = `## 🌐 Cloudflare Pages 프리뷰
+
+| 항목 | 내용 |
+|------|------|
+| 브랜치 | \`${branchName}\` |
+| 커밋 | \`${sha}\` |
+| 프리뷰 URL | ${deploymentUrl} |
+
+> PR이 업데이트되면 이 댓글도 자동으로 갱신됩니다.`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('Cloudflare Pages 프리뷰')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
