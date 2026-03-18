@@ -218,14 +218,21 @@ const currentPath = Astro.url.pathname;
         style.textContent = `
           .dark .pagefind-ui__result-title,
           .dark .pagefind-ui__result-title a { color: #f1f5f9 !important; }
-          .dark .pagefind-ui__result-excerpt { color: #f1f5f9 !important; }
+          .dark .pagefind-ui__result-excerpt,
+          .dark .pagefind-ui__result-excerpt * { color: #f1f5f9 !important; }
           .dark .pagefind-ui__result-excerpt mark { color: #0f172a !important; background-color: #818cf8 !important; }
           .dark .pagefind-ui__message { color: #94a3b8 !important; }
           .dark .pagefind-ui__search-input { color: #f1f5f9 !important; background-color: #1e293b !important; border-color: #475569 !important; }
           .dark .pagefind-ui__search-input::placeholder { color: #64748b !important; }
           .dark .pagefind-ui__result { border-color: #334155 !important; }
           .dark .pagefind-ui__button { color: #818cf8 !important; border-color: #818cf8 !important; background: transparent !important; }
-          .pagefind-ui__search-clear { text-align: center !important; }
+          .pagefind-ui__search-clear {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+            width: 100% !important;
+          }
         `;
         document.head.appendChild(style);
       }
