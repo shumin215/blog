@@ -54,7 +54,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
                     <a
                       href={`#${h.slug}`}
                       data-toc-link={h.slug}
-                      class={`block text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors leading-snug ${
+                      class={`block text-sm text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors leading-snug ${
                         h.depth === 3 ? 'pl-4' : ''
                       }`}
                     >
@@ -78,7 +78,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
             post.data.tags.map((tag) => (
               <a
                 href={url(`/tags/${tag}`)}
-                class="text-xs font-medium px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors"
+                class="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900 transition-colors"
               >
                 #{tag}
               </a>
@@ -98,10 +98,10 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
       <!-- Post body -->
       <div class="prose prose-gray dark:prose-invert max-w-none
         prose-headings:font-semibold prose-headings:text-gray-900 dark:prose-headings:text-gray-100
-        prose-a:text-indigo-600 dark:prose-a:text-indigo-400 prose-a:no-underline hover:prose-a:underline
-        prose-code:text-indigo-600 dark:prose-code:text-indigo-400 prose-code:bg-indigo-50 dark:prose-code:bg-indigo-950 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-normal
+        prose-a:text-emerald-600 dark:prose-a:text-emerald-400 prose-a:no-underline hover:prose-a:underline
+        prose-code:text-emerald-600 dark:prose-code:text-emerald-400 prose-code:bg-emerald-50 dark:prose-code:bg-emerald-950 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-normal
         prose-pre:bg-gray-900 prose-pre:text-gray-100
-        prose-blockquote:border-indigo-300 dark:prose-blockquote:border-indigo-700 prose-blockquote:text-gray-600 dark:prose-blockquote:text-gray-400">
+        prose-blockquote:border-emerald-300 dark:prose-blockquote:border-emerald-700 prose-blockquote:text-gray-600 dark:prose-blockquote:text-gray-400">
         <Content components={{ Callout, ImageCaption }} />
       </div>
 
@@ -112,7 +112,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
             prevPost && (
               <a href={url(`/posts/${prevPost.id}`)} class="group block">
                 <p class="text-xs text-gray-400 dark:text-gray-500 mb-1">← 이전 글</p>
-                <p class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
+                <p class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors line-clamp-2">
                   {prevPost.data.title}
                 </p>
               </a>
@@ -124,7 +124,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
             nextPost && (
               <a href={url(`/posts/${nextPost.id}`)} class="group block">
                 <p class="text-xs text-gray-400 dark:text-gray-500 mb-1">다음 글 →</p>
-                <p class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
+                <p class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors line-clamp-2">
                   {nextPost.data.title}
                 </p>
               </a>
@@ -141,11 +141,11 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 
 <style>
   #toc-nav a[data-active="true"] {
-    color: #6366f1;
+    color: #059669;
     font-weight: 600;
   }
   :global(.dark) #toc-nav a[data-active="true"] {
-    color: #818cf8;
+    color: #34d399;
   }
 </style>
 

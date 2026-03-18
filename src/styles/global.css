@@ -25,6 +25,21 @@
   font-weight: var(--shiki-dark-font-weight) !important;
 }
 
+/* Fix: hide empty first line in Shiki code blocks (leading newline artifact) */
+.astro-code .line:first-child:empty {
+  display: none;
+}
+
+/* Fix: remove background/border from code inside pre blocks */
+.prose pre code {
+  background-color: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  color: inherit !important;
+  font-size: inherit !important;
+  border: none !important;
+}
+
 /* Code block copy button */
 .code-block-wrapper {
   position: relative;

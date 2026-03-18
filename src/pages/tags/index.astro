@@ -27,12 +27,12 @@ const tags = Object.entries(tagMap).sort((a, b) => b[1] - a[1]);
           {tags.map(([tag, count]) => (
             <a
               href={url(`/tags/${tag}`)}
-              class="flex items-center gap-1.5 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-all group"
+              class="flex items-center gap-1.5 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-700 hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950 transition-all group"
             >
-              <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
                 #{tag}
               </span>
-              <span class="text-xs text-gray-400 dark:text-gray-500 group-hover:text-indigo-400">{count}</span>
+              <span class="text-xs text-gray-400 dark:text-gray-500 group-hover:text-emerald-400">{count}</span>
             </a>
           ))}
         </div>

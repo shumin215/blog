@@ -19,7 +19,7 @@ const currentPath = Astro.url.pathname;
     <!-- Logo -->
     <a
       href={url('/')}
-      class="text-lg font-bold text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0"
+      class="text-lg font-bold text-gray-900 dark:text-gray-100 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors shrink-0"
     >
       Shumin's World
     </a>
@@ -31,9 +31,9 @@ const currentPath = Astro.url.pathname;
           <li>
             <a
               href={href}
-              class={`text-sm font-medium px-3 py-1.5 rounded-md transition-colors hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-800 whitespace-nowrap ${
+              class={`text-sm font-medium px-3 py-1.5 rounded-md transition-colors hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-gray-50 dark:hover:bg-gray-800 whitespace-nowrap ${
                 currentPath === href || currentPath.startsWith(href + '/')
-                  ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950'
+                  ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950'
                   : 'text-gray-600 dark:text-gray-400'
               }`}
             >
@@ -101,9 +101,9 @@ const currentPath = Astro.url.pathname;
           <li>
             <a
               href={href}
-              class={`block text-sm font-medium px-3 py-2 rounded-md transition-colors hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-800 ${
+              class={`block text-sm font-medium px-3 py-2 rounded-md transition-colors hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-gray-50 dark:hover:bg-gray-800 ${
                 currentPath === href || currentPath.startsWith(href + '/')
-                  ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950'
+                  ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950'
                   : 'text-gray-600 dark:text-gray-400'
               }`}
             >
@@ -155,7 +155,7 @@ const currentPath = Astro.url.pathname;
 
   /* Dark mode CSS variables (applied before pagefind CSS loads) */
   .dark #search-container {
-    --pagefind-ui-primary: #818cf8;
+    --pagefind-ui-primary: #34d399;
     --pagefind-ui-text: #f1f5f9;
     --pagefind-ui-background: #1e293b;
     --pagefind-ui-border: #475569;
@@ -220,12 +220,12 @@ const currentPath = Astro.url.pathname;
           .dark .pagefind-ui__result-title a { color: #f1f5f9 !important; }
           .dark .pagefind-ui__result-excerpt,
           .dark .pagefind-ui__result-excerpt * { color: #f1f5f9 !important; }
-          .dark .pagefind-ui__result-excerpt mark { color: #0f172a !important; background-color: #818cf8 !important; }
+          .dark .pagefind-ui__result-excerpt mark { color: #0f172a !important; background-color: #34d399 !important; }
           .dark .pagefind-ui__message { color: #94a3b8 !important; }
           .dark .pagefind-ui__search-input { color: #f1f5f9 !important; background-color: #1e293b !important; border-color: #475569 !important; }
           .dark .pagefind-ui__search-input::placeholder { color: #64748b !important; }
           .dark .pagefind-ui__result { border-color: #334155 !important; }
-          .dark .pagefind-ui__button { color: #818cf8 !important; border-color: #818cf8 !important; background: transparent !important; }
+          .dark .pagefind-ui__button { color: #34d399 !important; border-color: #34d399 !important; background: transparent !important; }
           .pagefind-ui__search-clear {
             padding: 0 calc(15px * var(--pagefind-ui-scale, 0.8)) !important;
           }
