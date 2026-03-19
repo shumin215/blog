@@ -21,81 +21,76 @@ const postsByCategory = Object.fromEntries(
 );
 
 const colorMap = {
-  blue:   { badge: 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',   dot: 'bg-blue-500',   active: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border-l-2 border-blue-500' },
-  purple: { badge: 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300', dot: 'bg-purple-500', active: 'bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300 border-l-2 border-purple-500' },
-  green:  { badge: 'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300',  dot: 'bg-green-500',  active: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300 border-l-2 border-green-500' },
-  orange: { badge: 'bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300', dot: 'bg-orange-500', active: 'bg-orange-50 text-orange-700 dark:bg-orange-950 dark:text-orange-300 border-l-2 border-orange-500' },
-  cyan:   { badge: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-300',    dot: 'bg-cyan-500',   active: 'bg-cyan-50 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-300 border-l-2 border-cyan-500' },
-  rose:   { badge: 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300',    dot: 'bg-rose-500',   active: 'bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300 border-l-2 border-rose-500' },
+  blue:   { badge: 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',   dot: 'bg-blue-500' },
+  purple: { badge: 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300', dot: 'bg-purple-500' },
+  green:  { badge: 'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300',  dot: 'bg-green-500' },
+  orange: { badge: 'bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300', dot: 'bg-orange-500' },
+  cyan:   { badge: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-300',    dot: 'bg-cyan-500' },
+  rose:   { badge: 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300',    dot: 'bg-rose-500' },
 };
 ---
 
-<BaseLayout title="Playground" description="기술 탐구 공간 — AI, 프로그래밍, 하드웨어, 시리즈 포스트 모음" wide={true}>
-  <div class="flex gap-8 min-h-[calc(100vh-10rem)]">
+<BaseLayout title="Playground" description="기술 탐구 공간 — AI, 프로그래밍, 하드웨어, 시리즈 포스트 모음" fullWidth={true}>
+  <div class="flex">
 
-    <!-- Left Sidebar -->
-    <aside class="hidden lg:block w-52 shrink-0">
-      <div class="sticky top-24">
-        <p class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4 px-3">
-          Categories
-        </p>
-        <nav>
-          <ul class="space-y-0.5">
-            <li>
-              <button
-                data-category="all"
-                class="category-btn w-full text-left text-sm px-3 py-2 rounded-md transition-colors text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between gap-2"
-              >
-                <span class="flex items-center gap-2">
-                  <span class="w-2 h-2 rounded-full bg-gray-400 shrink-0"></span>
-                  All
-                </span>
-                <span class="text-xs text-gray-400">{allPosts.length}</span>
-              </button>
-            </li>
-            {categories.map((cat) => {
-              const c = colorMap[cat.color];
-              return (
-                <li>
-                  <button
-                    data-category={cat.id}
-                    data-color={cat.color}
-                    class={`category-btn w-full text-left text-sm px-3 py-2 rounded-md transition-colors text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between gap-2`}
-                  >
-                    <span class="flex items-center gap-2">
-                      <span class={`w-2 h-2 rounded-full ${c.dot} shrink-0`}></span>
-                      {cat.label}
-                    </span>
-                    <span class="text-xs text-gray-400">{postsByCategory[cat.id].length}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-      </div>
+    <!-- Left Sidebar: flush to the left edge -->
+    <aside class="hidden lg:flex flex-col w-56 shrink-0 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto border-r border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 px-4 py-8">
+      <p class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4 px-2">
+        Categories
+      </p>
+      <nav>
+        <ul class="space-y-0.5">
+          <li>
+            <button
+              data-category="all"
+              class="category-btn w-full text-left text-sm px-3 py-2 rounded-md transition-colors text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between gap-2"
+            >
+              <span class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-gray-400 shrink-0"></span>
+                All
+              </span>
+              <span class="text-xs text-gray-400">{allPosts.length}</span>
+            </button>
+          </li>
+          {categories.map((cat) => {
+            const c = colorMap[cat.color];
+            return (
+              <li>
+                <button
+                  data-category={cat.id}
+                  data-color={cat.color}
+                  class="category-btn w-full text-left text-sm px-3 py-2 rounded-md transition-colors text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between gap-2"
+                >
+                  <span class="flex items-center gap-2">
+                    <span class={`w-2 h-2 rounded-full ${c.dot} shrink-0`}></span>
+                    {cat.label}
+                  </span>
+                  <span class="text-xs text-gray-400">{postsByCategory[cat.id].length}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
     </aside>
 
     <!-- Main Content -->
-    <div class="flex-1 min-w-0">
+    <div class="flex-1 min-w-0 max-w-5xl px-6 sm:px-10 py-10">
       <div class="mb-8">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Playground</h1>
         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">기술 탐구 공간</p>
       </div>
 
       <!-- Mobile category scroll -->
-      <div class="lg:hidden flex gap-2 overflow-x-auto pb-3 mb-6 scrollbar-hide">
-        <button
-          data-category="all"
-          class="category-btn shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 whitespace-nowrap"
-        >
+      <div class="lg:hidden flex gap-2 overflow-x-auto pb-3 mb-6">
+        <button data-category="all" class="category-btn shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 whitespace-nowrap">
           All
         </button>
         {categories.map((cat) => (
           <button
             data-category={cat.id}
             data-color={cat.color}
-            class={`category-btn shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 whitespace-nowrap`}
+            class="category-btn shrink-0 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 whitespace-nowrap"
           >
             {cat.label}
           </button>
@@ -103,7 +98,7 @@ const colorMap = {
       </div>
 
       <!-- Post grid -->
-      <div id="post-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div id="post-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {allPosts.map((post) => {
           const cat = categories.find((c) => c.id === post.data.category);
           const c = cat ? colorMap[cat.color] : null;
@@ -158,7 +153,6 @@ const colorMap = {
   const emptyState = document.getElementById('empty-state');
 
   function activate(category: string) {
-    // Update button states
     buttons.forEach((btn) => {
       const isActive = btn.dataset.category === category;
       btn.classList.toggle('font-semibold', isActive);
@@ -168,7 +162,6 @@ const colorMap = {
       btn.classList.toggle('dark:bg-gray-800', isActive);
     });
 
-    // Filter cards
     let visible = 0;
     cards.forEach((card) => {
       const match = category === 'all' || card.dataset.category === category;
@@ -179,7 +172,6 @@ const colorMap = {
     emptyState?.classList.toggle('hidden', visible > 0);
   }
 
-  // Init: activate 'all' by default, or from URL hash
   const initialCategory = location.hash.replace('#', '') || 'all';
   activate(initialCategory);
 
