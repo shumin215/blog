@@ -2,13 +2,9 @@
 import { url } from '@utils/url';
 
 const navLinks = [
-  { href: url('/'), label: 'Home' },
   { href: url('/about'), label: 'About' },
-  { href: url('/tags/research'), label: 'Research' },
-  { href: url('/tags/programming'), label: 'Programming' },
-  { href: url('/tags/series'), label: 'Series' },
-  { href: url('/tags/english'), label: 'English' },
-  { href: url('/tags/personal'), label: 'Personal' },
+  { href: url('/playground'), label: 'Playground' },
+  { href: url('/personal'), label: 'Personal' },
 ];
 
 const currentPath = Astro.url.pathname;
