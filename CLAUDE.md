@@ -80,6 +80,8 @@ blog/
 - Tailwind 클래스: 모바일 퍼스트 (`sm:`, `md:`, `lg:` 순서)
 - 이미지: `public/images/` 하위 폴더 관리
 - 커밋: Conventional Commits 형식 (`feat:`, `fix:`, `docs:` 등)
+- **브랜치/태그명: 반드시 영어만 사용** (한글, 특수문자 금지, kebab-case 권장)
+- **커밋 전 필수 검토**: `npm run lint` 및 `npm run build` 실행하여 문법 오류 없는지 확인 후 커밋
 
 ## 환경 변수
 
