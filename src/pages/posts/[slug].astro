@@ -39,11 +39,11 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
   <!-- Relative wrapper: TOC is positioned outside (absolute) to the left -->
   <div class="relative">
 
-    <!-- TOC: absolutely outside the main content box, visible only on xl+ -->
+    <!-- TOC: fixed to the right side of the viewport, visible only on xl+ -->
     {
       tocHeadings.length > 0 && (
-        <aside class="hidden xl:block absolute top-0 right-full h-full w-52 pr-8">
-          <div class="sticky top-20">
+        <aside class="hidden xl:block fixed top-20 right-8 w-52 max-h-[calc(100vh-6rem)] overflow-y-auto">
+          <div>
             <p class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
               목차
             </p>
@@ -140,12 +140,39 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 </BaseLayout>
 
 <style>
+  /* TOC active state */
   #toc-nav a[data-active="true"] {
     color: #059669;
     font-weight: 600;
   }
   :global(.dark) #toc-nav a[data-active="true"] {
     color: #34d399;
+  }
+
+  /* H2: bold section header with bottom border */
+  :global(.prose h2) {
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding-bottom: 0.375rem;
+    border-bottom: 2px solid #e5e7eb;
+    margin-top: 2.5rem;
+  }
+  :global(.dark .prose h2) {
+    border-color: #374151;
+  }
+
+  /* H3: emerald left accent bar */
+  :global(.prose h3) {
+    font-size: 1.125rem;
+    font-weight: 600;
+    padding-left: 0.75rem;
+    border-left: 3px solid #10b981;
+    margin-top: 1.75rem;
+    color: #1f2937;
+  }
+  :global(.dark .prose h3) {
+    border-color: #059669;
+    color: #f3f4f6;
   }
 </style>
 
