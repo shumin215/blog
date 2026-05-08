@@ -157,6 +157,15 @@ cover: "/images/posts/cover.png"  # 선택 (OG 이미지로 사용)
 
 ---
 
+## WordPress 콘텐츠 이전/리뷰
+
+기존 NAS WordPress 글은 바로 전체 이전하지 않고, 먼저 공개 여부를 리뷰한 뒤 선별 이전합니다.
+
+- 리뷰 기준과 현재 Astro 구조 매핑: [`docs/wordpress-content-review.md`](docs/wordpress-content-review.md)
+- Migration status dashboard: [`docs/wordpress-migration-status.md`](docs/wordpress-migration-status.md)
+- NAS SSH 접속 참고: [`docs/nas-ssh-setup.md`](docs/nas-ssh-setup.md)
+- 실제 단일 글 이전은 `.codex/skills/wordpress-migration/SKILL.md`의 워크플로를 따릅니다.
+
 ## 배포
 
 `main` 브랜치에 push하면 GitHub Actions가 자동으로 빌드 후 Cloudflare에 배포합니다.

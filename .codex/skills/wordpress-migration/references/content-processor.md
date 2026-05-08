@@ -37,6 +37,21 @@ inline code, code blocks, lists, and blockquotes.
 Preserve fenced code block languages when WordPress HTML exposes
 `language-{name}` classes.
 
+When converting headings, remove WordPress/source-outline numbering from the
+start of `h1`-`h6` heading text. This applies only to heading prefixes, not body
+paragraphs, lists, or fenced code blocks.
+
+Examples:
+
+- `## 1. Overview` → `## Overview`
+- `### 1.1 Background` → `### Background`
+- `### 1.1.2 Details` → `### Details`
+- `## Example. Run the code` → `## Run the code`
+- `## Example 1. Run the code` → `## Run the code`
+
+After removing the prefix, also trim leftover separators such as spaces, `-`,
+`:`, and `.`.
+
 Review complex Gutenberg blocks, tables, embeds, galleries, captions, and custom
 shortcodes manually. Convert tables and embeds when the meaning is clear. Remove
 WordPress shortcodes such as `[gallery]` or `[caption]` only when no useful
