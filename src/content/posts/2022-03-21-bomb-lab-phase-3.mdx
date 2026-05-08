@@ -1,0 +1,127 @@
+---
+title: "[Bomb Lab] Phase 3"
+date: 2022-03-21
+description: "(gdb) disassemble phase_3 Dump of assembler code for function phase_3: => 0x0000555555555639 &lt;+0&gt;: endbr64 0x000055555555563d &lt;+4&gt;: sub $0x18,%rsp..."
+tags: ["series", "reverse-engineering", "phase-3"]
+category: "Series"
+subcategory: "Bomb Lab"
+draft: false
+---
+```
+(gdb) disassemble phase_3
+Dump of assembler code for function phase_3:
+=> 0x0000555555555639 <+0>:     endbr64
+   0x000055555555563d <+4>:     sub    $0x18,%rsp
+   0x0000555555555641 <+8>:     mov    %fs:0x28,%rax
+   0x000055555555564a <+17>:    mov    %rax,0x8(%rsp)
+   0x000055555555564f <+22>:    xor    %eax,%eax
+   0x0000555555555651 <+24>:    lea    0x4(%rsp),%rcx
+   0x0000555555555656 <+29>:    mov    %rsp,%rdx
+   0x0000555555555659 <+32>:    lea    0x1caf(%rip),%rsi        # 0x55555555730f
+   0x0000555555555660 <+39>:    callq  0x5555555552c0 <__isoc99_sscanf@plt>
+   0x0000555555555665 <+44>:    cmp    $0x1,%eax
+   0x0000555555555668 <+47>:    jle    0x555555555688 <phase_3+79>
+   0x000055555555566a <+49>:    cmpl   $0x7,(%rsp)
+   0x000055555555566e <+53>:    ja     0x55555555570e <phase_3+213>
+   0x0000555555555674 <+59>:    mov    (%rsp),%eax
+   0x0000555555555677 <+62>:    lea    0x1b22(%rip),%rdx        # 0x5555555571a0
+   0x000055555555567e <+69>:    movslq (%rdx,%rax,4),%rax
+   0x0000555555555682 <+73>:    add    %rdx,%rax
+   0x0000555555555685 <+76>:    notrack jmpq *%rax
+   0x0000555555555688 <+79>:    callq  0x555555555be8 <explode_bomb>
+   0x000055555555568d <+84>:    jmp    0x55555555566a <phase_3+49>
+   0x000055555555568f <+86>:    mov    $0x29d,%eax
+   0x0000555555555694 <+91>:    sub    $0xf7,%eax
+   0x0000555555555699 <+96>:    add    $0x2ac,%eax
+   0x000055555555569e <+101>:   sub    $0xca,%eax
+   0x00005555555556a3 <+106>:   add    $0xca,%eax
+   0x00005555555556a8 <+111>:   sub    $0xca,%eax
+   0x00005555555556ad <+116>:   add    $0xca,%eax
+   0x00005555555556b2 <+121>:   sub    $0xca,%eax
+   0x00005555555556b7 <+126>:   cmpl   $0x5,(%rsp)
+   0x00005555555556bb <+130>:   jg     0x5555555556c3 <phase_3+138>
+   0x00005555555556bd <+132>:   cmp    %eax,0x4(%rsp)
+   0x00005555555556c1 <+136>:   je     0x5555555556c8 <phase_3+143>
+   0x00005555555556c3 <+138>:   callq  0x555555555be8 <explode_bomb>
+   0x00005555555556c8 <+143>:   mov    0x8(%rsp),%rax
+   0x00005555555556cd <+148>:   xor    %fs:0x28,%rax
+   0x00005555555556d6 <+157>:   jne    0x55555555571a <phase_3+225>
+   0x00005555555556d8 <+159>:   add    $0x18,%rsp
+   0x00005555555556dc <+163>:   retq
+   0x00005555555556dd <+164>:   mov    $0x0,%eax
+   0x00005555555556e2 <+169>:   jmp    0x555555555694 <phase_3+91>
+   0x00005555555556e4 <+171>:   mov    $0x0,%eax
+   0x00005555555556e9 <+176>:   jmp    0x555555555699 <phase_3+96>
+   0x00005555555556eb <+178>:   mov    $0x0,%eax
+   0x00005555555556f0 <+183>:   jmp    0x55555555569e <phase_3+101>
+   0x00005555555556f2 <+185>:   mov    $0x0,%eax
+   0x00005555555556f7 <+190>:   jmp    0x5555555556a3 <phase_3+106>
+   0x00005555555556f9 <+192>:   mov    $0x0,%eax
+   0x00005555555556fe <+197>:   jmp    0x5555555556a8 <phase_3+111>
+   0x0000555555555700 <+199>:   mov    $0x0,%eax
+   0x0000555555555705 <+204>:   jmp    0x5555555556ad <phase_3+116>
+   0x0000555555555707 <+206>:   mov    $0x0,%eax
+   0x000055555555570c <+211>:   jmp    0x5555555556b2 <phase_3+121>
+   0x000055555555570e <+213>:   callq  0x555555555be8 <explode_bomb>
+   0x0000555555555713 <+218>:   mov    $0x0,%eax
+   0x0000555555555718 <+223>:   jmp    0x5555555556b7 <phase_3+126>
+   0x000055555555571a <+225>:   callq  0x555555555220 <__stack_chk_fail@plt>
+End of assembler dump.
+```
+
+Phase 2와 마찬가지로 `phase_3`를 disassembly하면 위와 같다. 위 코드에서 `&lt;+39&gt;`를 수행하고 난 뒤에 `$rsi`의 값을 주소로하는 메모리 값을 보면 다음과 같다.
+
+```
+(gdb) x/s $rsi
+0x55555555730f: "%d %d"
+```
+
+이를 통해 `phase_3`의 argument는 2개로 유추해볼 수 있다. 실제로 `&lt;+44&gt;`를 보면 # of argument의 값인 `$eax`와 1을 비교하는걸로 봐서 1개 이하의 입력을 하는 경우 폭탄이 터지도록 되어 있는 것을 볼 수 있다.
+
+```
+(gdb) p $rsp
+$1 = (void *) 0x7fffffffe3c0
+(gdb) x $rsp
+0x7fffffffe3c0: 0x00000001
+```
+
+그리고 임의의 검증을 위해 `1 2`를 입력한 상태로 `&lt;+49&gt;`에서 `$rsp`에 저장되어 있는 값을 보니 우리가 처음 입력한 값인 1이 출력됐다. 그리고 conditional branch 명령어 (`ja`, jump if above)를 통해 만약 처음 입력한 값이 `0x7`보다 클 경우 폭탄이 터지도록 `&lt;phase_3+213&gt;`으로 이동하게 되어있다. 즉, 첫 입력한 정수는 7보다 작은 정수여야 한다.
+
+그리고 어떤 의도가 예상되지 못하는 몇 명령어들을 수행하고 난 뒤에 `&lt;+76&gt;`에서 `$rax`에 저장되어있는 곳으로 jump하는 명령어 `notrack`을 수행해서 이동했다. `$rax`에는 다음과 같은 값이 들어있었다.
+
+```
+(gdb) p/x $rax
+$7 = 0x5555555556dd
+# 이는 <+164> 의 주소였다.
+```
+
+그 후 다시 &lt;phase_3+91&gt;로 이동하면 다음과 같이 코드가 구성된다.
+
+```
+   0x0000555555555694 <+91>:    sub    $0xf7,%eax
+   0x0000555555555699 <+96>:    add    $0x2ac,%eax
+   0x000055555555569e <+101>:   sub    $0xca,%eax
+   0x00005555555556a3 <+106>:   add    $0xca,%eax
+   0x00005555555556a8 <+111>:   sub    $0xca,%eax
+   0x00005555555556ad <+116>:   add    $0xca,%eax
+   0x00005555555556b2 <+121>:   sub    $0xca,%eax
+   0x00005555555556b7 <+126>:   cmpl   $0x5,(%rsp)   
+```
+
+바로 직전에 `$eax`는 0으로 초기화된 상태였고 (`+164`에서), 여기에 여러가지 덧셈과 뺄셈을 수행하고 난 뒤에 `&lt;phase_3+126&gt;`에서 우리가 처음 입력했던 값과 다시 `0x5`를 비교해서 더 큰 값이면 폭탄이 터지도록 되어있다. 다행이 우리가 처음 입력한 값은 1이였기 때문에 넘어간다. 참고로 위 덧셈과 뺄셈을 수행한 결과가 저장된 `$eax` register에는 `0xeb`가 저장되어 있다.
+
+```
+(gdb) p $eax
+$9 = 0xeb
+```
+
+그리고 `&lt;phase_3+136&gt;`에서 우리가 두 번째로 입력한 값인 `2`와 `$eax`에 저장된 값을 비교해서 같은 경우 `&lt;phase_3+143&gt;`으로 이동하도록 되어있다. 우리는 `2`를 입력했기 때문에 폭탄이 터졌다. 이를 다시 `0xeb` (10진수로 `235`)를 입력해보니 정상적으로 통과하는 것을 볼 수 있었다.
+
+```
+$ ./bomb solution.txt
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+Phase 1 defused. How about the next one?
+That's number 2.  Keep going!
+Halfway there!
+```
