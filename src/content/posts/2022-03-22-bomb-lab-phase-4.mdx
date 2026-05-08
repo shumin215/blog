@@ -1,0 +1,102 @@
+---
+title: "[Bomb Lab] Phase 4"
+date: 2022-03-22
+description: "(gdb) disas phase_4 Dump of assembler code for function phase_4: 0x0000000000001760 &lt;+0&gt;: endbr64 0x0000000000001764 &lt;+4&gt;: sub $0x18,%rsp 0x0000000..."
+tags: ["series", "reverse-engineering"]
+category: "Series"
+subcategory: "Bomb Lab"
+draft: false
+---
+```
+(gdb) disas phase_4
+Dump of assembler code for function phase_4:
+   0x0000000000001760 <+0>:     endbr64
+   0x0000000000001764 <+4>:     sub    $0x18,%rsp
+   0x0000000000001768 <+8>:     mov    %fs:0x28,%rax
+   0x0000000000001771 <+17>:    mov    %rax,0x8(%rsp)
+   0x0000000000001776 <+22>:    xor    %eax,%eax
+   0x0000000000001778 <+24>:    lea    0x4(%rsp),%rcx
+   0x000000000000177d <+29>:    mov    %rsp,%rdx
+   0x0000000000001780 <+32>:    lea    0x1b88(%rip),%rsi        # 0x330f
+   0x0000000000001787 <+39>:    callq  0x12c0 <__isoc99_sscanf@plt>
+   0x000000000000178c <+44>:    cmp    $0x2,%eax
+   0x000000000000178f <+47>:    jne    0x1797 <phase_4+55>
+   0x0000000000001791 <+49>:    cmpl   $0xe,(%rsp)
+   0x0000000000001795 <+53>:    jbe    0x179c <phase_4+60>
+   0x0000000000001797 <+55>:    callq  0x1be8 <explode_bomb>
+   0x000000000000179c <+60>:    mov    $0xe,%edx
+   0x00000000000017a1 <+65>:    mov    $0x0,%esi
+   0x00000000000017a6 <+70>:    mov    (%rsp),%edi
+   0x00000000000017a9 <+73>:    callq  0x171f <func4>
+   0x00000000000017ae <+78>:    cmp    $0x1,%eax
+   0x00000000000017b1 <+81>:    jne    0x17ba <phase_4+90>
+   0x00000000000017b3 <+83>:    cmpl   $0x1,0x4(%rsp)
+   0x00000000000017b8 <+88>:    je     0x17bf <phase_4+95>
+   0x00000000000017ba <+90>:    callq  0x1be8 <explode_bomb>
+   0x00000000000017bf <+95>:    mov    0x8(%rsp),%rax
+   0x00000000000017c4 <+100>:   xor    %fs:0x28,%rax
+   0x00000000000017cd <+109>:   jne    0x17d4 <phase_4+116>
+   0x00000000000017cf <+111>:   add    $0x18,%rsp
+   0x00000000000017d3 <+115>:   retq
+   0x00000000000017d4 <+116>:   callq  0x1220 <__stack_chk_fail@plt>
+End of assembler dump.
+```
+
+우선 `phase_4`를 disassembly 해보면 위와 같다. 우선 `&lt;+44&gt;`에서 `$eax`의 값을 `0x2`와 동일한지 확인하는 것으로 봐선 2개의 입력이 필요한 것으로 예측된다.  
+`&lt;+49&gt;`에서 보면 처음 입력한 값과 `0xe`를 비교해서 `jbe` (jump if bellow or equal)를 수행하는 것으로 봐선 첫 입력값이 `0xe` (14)보다 작거나 같아야 `explode_bomb`를 피할 수 있다. 그리고 첫 번째 입력한 값을 `$edi` register로 전달하고 해당 값을 `&lt;+73&gt;`에서 `func4`로 전달하면서 들어간다.
+
+```
+(gdb) disassemble func4
+Dump of assembler code for function func4:
+   0x000055555555571f <+0>:     endbr64
+   0x0000555555555723 <+4>:     sub    $0x8,%rsp
+   0x0000555555555727 <+8>:     mov    %edx,%eax
+   0x0000555555555729 <+10>:    sub    %esi,%eax
+   0x000055555555572b <+12>:    mov    %eax,%ecx
+   0x000055555555572d <+14>:    shr    $0x1f,%ecx
+   0x0000555555555730 <+17>:    add    %eax,%ecx
+   0x0000555555555732 <+19>:    sar    %ecx
+   0x0000555555555734 <+21>:    add    %esi,%ecx
+   0x0000555555555736 <+23>:    cmp    %edi,%ecx
+   0x0000555555555738 <+25>:    jg     0x555555555746 <func4+39>
+   0x000055555555573a <+27>:    mov    $0x0,%eax
+   0x000055555555573f <+32>:    jl     0x555555555752 <func4+51>
+   0x0000555555555741 <+34>:    add    $0x8,%rsp
+   0x0000555555555745 <+38>:    retq
+   0x0000555555555746 <+39>:    lea    -0x1(%rcx),%edx
+   0x0000555555555749 <+42>:    callq  0x55555555571f <func4>
+   0x000055555555574e <+47>:    add    %eax,%eax
+   0x0000555555555750 <+49>:    jmp    0x555555555741 <func4+34>
+   0x0000555555555752 <+51>:    lea    0x1(%rcx),%esi
+   0x0000555555555755 <+54>:    callq  0x55555555571f <func4>
+   0x000055555555575a <+59>:    lea    0x1(%rax,%rax,1),%eax
+   0x000055555555575e <+63>:    jmp    0x555555555741 <func4+34>
+End of assembler dump.
+```
+
+위 함수를 분석하기 전에 `func4`가 호출되기 전에 폭탄이 터지는 조건을 알아보면 `$eax`의 값이 `0x1`이 아니면 폭탄이 터지도록 `&lt;+78&gt;`, `&lt;+81&gt;`에 기술되어 있다. 이를 토대로 `$eax`에 `0x0`을 넣고 return하는 progress를 가지는 `&lt;+27&gt;`은 피해야 할 것으로 보인다. 그리고 `$eax`에 1을 넣을만한 곳은 `&lt;+59&gt;`인데, 만약 `$eax`가 0일 경우 `1`이 되는 연산을 수행할 것으로 예상된다.
+
+우선 `&lt;+25&gt;`에서 conditional branch (`jg`, jump if greater)를 피하기 위해선 `$ecx` < `$edi` 조건이 성립되어야 한다.
+
+```
+(gdb) p $ecx
+$1 = 7
+```
+
+`&lt;func4+23&gt;` 전까지 수행한 뒤 `$ecx`의 값은 7이기 때문에 첫 번째 입력한 값이 저장된 `$edi`는 7보다 커야 한다. 참고로 `$ecx`의 값에 우리가 입력한 값이 영향을 미치지 않아서 중간엔 따로 분석하지 않았다. 만약 그렇지 못할 경우 재귀적으로 `func4`를 돌고 돌다가 `$eax`를 0으로 설정하고 함수를 나갈 것이다.  
+그리고 `&lt;func4+51&gt;`에서 다시 재귀적으로 함수의 첫 시작지점으로 이동한다. 이제 함수를 return하면 `$eax`에 우리가 원하는 `0x1`이 들어간다.
+
+다음 `&lt;+23&gt;`을 수행 직전 `$ecx`에선 `0xb`가 저장되어 있었고 만약 첫 번째 입력값이 저장된 `$eax`의 값이 `0xb` (**11**) 였으면 바로 탈출할 수 있었기 때문에 정답이 될 것이다.
+
+이제 다시 `phase_4` 함수로 돌아가면, `&lt;phase_4+83&gt;`에서 두 번째 인자값인 `0x4(%rsp)`와 `0x1`를 비교해서 같아야 하는 부분이 나타났다. 이로써 두 번째 인자의 값은 1로 결정이 된다. 이렇게 phase 4 또한 풀 수 있었다.
+
+```
+$ ./bomb solution.txt
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+Phase 1 defused. How about the next one?
+That's number 2.  Keep going!
+Halfway there!
+11 1
+So you got that one.  Try this one.
+```
