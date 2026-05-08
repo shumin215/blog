@@ -1,0 +1,124 @@
+---
+title: "[PyQt] Dialog과 Data 교환"
+date: 2021-11-18
+description: "Main Window to Dialog Main window에서 dialog로 전달하는 방법은 dialog object를 생성 할 때, keyword argument를 통해 쉽게 전달 가능하다. dlg = dlgForm(self, name=self.editName..."
+tags: ["series", "pyqt", "dialog", "user-signal"]
+category: "Series"
+draft: false
+---
+## Main Window to Dialog
+
+Main window에서 dialog로 전달하는 방법은 dialog object를 생성 할 때, keyword argument를 통해 쉽게 전달 가능하다.
+
+```
+dlg = dlgForm(self, name=self.editName.text())
+```
+
+## Dialog to Main Window
+
+Dialog class에서 전달하고자 하는 variable의 getter 함수를 slot으로 등록해서 lambda 함수를 통해 전달 가능하다.
+
+```
+dlg = dlgForm(self, name=self.editName.text())
+dlg.accepted.connect(lambda: self.print_info(dlg.getInfo())
+```
+
+## Example
+
+```
+import sys, os
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import Qt
+
+MAIN_FILE_NAME = 'main_wnd'
+DIALOG_FILE_NAME = 'dialog'
+os.system('python -m PyQt5.uic.pyuic -x ' + MAIN_FILE_NAME + '.ui -o ' + MAIN_FILE_NAME + '.py')
+os.system('python -m PyQt5.uic.pyuic -x ' + DIALOG_FILE_NAME + '.ui -o ' + DIALOG_FILE_NAME + '.py')
+from ex4_2_03.main_wnd import Ui_MainWindow
+from ex4_2_03.dialog import Ui_Dialog
+
+class Form(QMainWindow, Ui_MainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.actionHobby.triggered.connect(self.show_dialog)
+
+    def show_dialog(self):
+        dlg = dlgForm(self, name=self.editName.text())
+        dlg.accepted.connect(lambda: self.print_info(dlg.getInfo()))
+        dlg.open()
+
+    def print_info(self, tinfo):
+        self.lblNick.setText('닉네임: '+tinfo[0] if tinfo[0] else '없음')
+        self.lblHobby.setText('취미: '+",".join(tinfo[1])if tinfo[1] else '없음')
+        self.lblGender.setText('성별: '+tinfo[2])
+
+class dlgForm(QDialog, Ui_Dialog):
+
+    def __init__(self, parent=None, flag=Qt.Dialog, name=None):
+        super().__init__(parent, flag)
+        self.setupUi(self)
+        self.editNick.setText(name)
+
+    def getNick(self):
+        return self.editNick.text()
+
+    def getHobby(self):
+        lst_hobby = [chkbox.text() for chkbox in self.buttonGroup.buttons() if chkbox.isChecked()]
+        # lst_hobby = []
+        # for chkbox in self.buttonGroup.buttons():
+        #     if chkbox.isChecked(): lst_hobby.append(chkbox.text())
+        return lst_hobby
+
+    def getGender(self):
+        if self.rdoMale.isChecked():
+            return '남자'
+        else:
+            return '여자'
+
+    def getInfo(self):
+        r = self.getNick(), self.getHobby(), self.getGender()
+        return r
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    w = Form()
+    w.show()
+    sys.exit(app.exec_())
+```
+
+## User Signal 생성
+
+기본적으로 dialog를 사용 할 때 사용되는 signal은 accepted, rejected, finished가 존재하는데 그 외에 custom signal을 만들 수 있다.
+
+```
+class dlgForm(QDialog, Ui_Dialog):
+    user_signal = pyqtSignal(tuple)
+```
+
+우선 class 변수로 원하는 user signal을 pyqtSignal 클래스를 통해 정의한다. 반드시 class 변수로 정의해야한다.
+
+```
+    def btn_clicked(self, btn):
+        if btn.text() == 'OK':
+            self.user_signal.emit(self.getInfo())
+```
+
+그리고 `emit()` 메소드를 통해 main window로 전달하고자 하는 handler를 등록한다.
+
+```
+class Form(QMainWindow, Ui_MainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.actionHobby.triggered.connect(self.show_dialog)
+
+    def show_dialog(self):
+        dlg = dlgForm(self, name=self.editName.text())
+        dlg.user_signal.connect(self.print_info)
+        dlg.open()
+```
+
+마지막으로 main window에서 user signal class 변수를 `connect()`를 통해 slot을 등록해준다.
+
+참고로 QT엔 widget과 view가 있는데 조직적으로 관리를 하기 유용한 것은 view를 써서 View - Model - Item을 각각 관리하는 것이다.
