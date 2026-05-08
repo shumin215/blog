@@ -1,0 +1,4 @@
+interface:
+  display_name: "WordPress Migration"
+  short_description: "Migrate WordPress posts into Astro MDX"
+  default_prompt: "Use $wordpress-migration to migrate a WordPress post into this Astro blog."
