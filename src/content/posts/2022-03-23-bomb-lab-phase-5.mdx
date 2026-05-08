@@ -1,0 +1,91 @@
+---
+title: "[Bomb Lab] Phase 5"
+date: 2022-03-23
+description: "(gdb) disassemble phase_5 Dump of assembler code for function phase_5: 0x00000000000017d9 &lt;+0&gt;: endbr64 0x00000000000017dd &lt;+4&gt;: push %rbx 0x000000..."
+tags: ["series", "reverse-engineering"]
+category: "Series"
+subcategory: "Bomb Lab"
+draft: false
+---
+```
+(gdb) disassemble phase_5
+Dump of assembler code for function phase_5:
+   0x00000000000017d9 <+0>:     endbr64
+   0x00000000000017dd <+4>:     push   %rbx
+   0x00000000000017de <+5>:     mov    %rdi,%rbx
+   0x00000000000017e1 <+8>:     callq  0x1ab3 <string_length>
+   0x00000000000017e6 <+13>:    cmp    $0x6,%eax
+   0x00000000000017e9 <+16>:    jne    0x1817 <phase_5+62>
+   0x00000000000017eb <+18>:    mov    %rbx,%rax
+   0x00000000000017ee <+21>:    lea    0x6(%rbx),%rdi
+   0x00000000000017f2 <+25>:    mov    $0x0,%ecx
+   0x00000000000017f7 <+30>:    lea    0x19c2(%rip),%rsi        # 0x31c0 <array.3471>
+   0x00000000000017fe <+37>:    movzbl (%rax),%edx
+   0x0000000000001801 <+40>:    and    $0xf,%edx
+   0x0000000000001804 <+43>:    add    (%rsi,%rdx,4),%ecx
+   0x0000000000001807 <+46>:    add    $0x1,%rax
+   0x000000000000180b <+50>:    cmp    %rdi,%rax
+   0x000000000000180e <+53>:    jne    0x17fe <phase_5+37>
+   0x0000000000001810 <+55>:    cmp    $0x33,%ecx
+   0x0000000000001813 <+58>:    jne    0x181e <phase_5+69>
+   0x0000000000001815 <+60>:    pop    %rbx
+   0x0000000000001816 <+61>:    retq
+   0x0000000000001817 <+62>:    callq  0x1be8 <explode_bomb>
+   0x000000000000181c <+67>:    jmp    0x17eb <phase_5+18>
+   0x000000000000181e <+69>:    callq  0x1be8 <explode_bomb>
+   0x0000000000001823 <+74>:    jmp    0x1815 <phase_5+60>
+End of assembler dump.
+```
+
+Phase 5에는 이전과 다르게 `sscanf` 함수로 된 이름이 보이지 않는다. 그리고 `&lt;+8&gt;`에 `&lt;string_length&gt;` 함수로 건너 뛰며 바로 직전에 `$rdi`의 값을 복사하는 것으로 봐선 `$rdi`의 값이 뭔지가 중요 할 것으로 보인다.
+
+```
+(gdb) p $rdi
+$1 = 93824992253920
+(gdb) x/s $rdi
+0x5555555597e0 <input_strings+320>:     "123456"
+```
+
+테스트용으로 입력을 `123456`을 입력해본 결과 위와 같이 `$rdi`에는 우리가 입력한 문자열의 주소가 저장되어 있다. 그리고 `&lt;+13&gt;`에서 함수의 return value가 저장된 `$eax`와 `0x6`을 비교하는데, 함수 이름을 통해서 문자열의 길이를 반환하는 함수로 분석 할 수 있다. 따라서 6개의 문자열을 가지는 입력이 들어가야 하기 때문에 테스트용으로 `123456`을 입력 한 것이다.
+
+```
+(gdb) x/s $rax
+0x5555555597e0 <input_strings+320>:     "123456"
+(gdb) p $rdx
+49
+```
+
+그리고 `&lt;+37&gt;`까지 수행하고 register의 값을 확인해보면 `$rax`에는 우리가 입력한 문자열이, `$rdx`에는 문자열의 첫 문자인 "`1`"에 대한 ASCII code value인 `49`가 저장되어 있었다. `movzbl` (MOVe Zero-extended Byte to doubLe word)는 하위 1 byte를 destination register에 double word로 복사하는 명령어다.
+
+그래서 우리가 입력한 문자열의 첫 번째 문자에 대해 `&lt;+40&gt;`에서 하위 4-bit에 대해 masking해서 해당 값을 이용해 `$rsi`를 base address로 접근 하는 것을 `&lt;+43&gt;`에서 볼 수 있다.  
+그리고 `&lt;+46&gt;`, `&lt;+50&gt;` 명령어들을 통해서 우리가 입력한 문자열이 저장된 주소 `$rax`를 1씩 증가시키며 문자열의 첫 주소에 +6을 한 값이 저장된 `$rdi`와 비교하는 동작으로 우리는 6번의 looping으로 동작하는 것을 알 수 있다.
+
+정리해보면 위 동작은, 우리가 입력한 문자열의 ASCII code value의 하위 4-bit을 masking해서 어떤 주어진 array에 indexing 하는데 이용한다. 그리고 6번의 더한 값을 모두 합한 값이 `$ecx`에 저장되며 `0x33`과 같은 값이 되어야 한다.
+
+```
+(gdb) x/wx $rsi
+0x5555555571c0 <array.3471>:    0x00000002
+0x5555555571c4 <array.3471+4>:  0x0000000a
+0x5555555571c8 <array.3471+8>:  0x00000006
+0x5555555571cc <array.3471+12>: 0x00000001
+0x5555555571d0 <array.3471+16>: 0x0000000c
+0x5555555571d4 <array.3471+20>: 0x00000010
+0x5555555571d8 <array.3471+24>: 0x00000009
+0x5555555571dc <array.3471+28>: 0x00000003
+```
+
+0x33을 6개의 값의 덧셈으로 만들기 위해 0x00000001가 3개, 0x00000010가 3개가 있으면 될 것으로 보이기 때문에 index 3 (`0x00000001`), index 5 (0x00000010)이 각각 3개씩 들어가는 문자들을 넣어주면 된다. 따라서 우리는 `333555`를 넣어보고 결과를 보면 다음과 같다. (문자 `1`의 ASCII code value는 `0x31`이기 때문이다.)
+
+```
+$ ./bomb solution.txt
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+Phase 1 defused. How about the next one?
+That's number 2.  Keep going!
+Halfway there!
+So you got that one.  Try this one.
+333555
+Good work!  On to the next...
+```
+
+따라서 phase_5의 답은 **array에 저장된 값을 6번 합했을 때 0x33이 될 수 있는 6개의 index value에 해당하는 문자들**이다.
