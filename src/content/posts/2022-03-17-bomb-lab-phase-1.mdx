@@ -1,0 +1,222 @@
+---
+title: "[Bomb Lab] Phase 1"
+date: 2022-03-17
+description: "Bomb lab은 assembly 및 computer system을 공부를 하는데 도움이 되는 project다. 기본적으로 bomb lab을 수행하는데 하나의 binary가 주어지는데 해당 binary는 bomb 라는 이름으로 되어있다. 참고로 해당 binary는..."
+tags: ["series", "reverse-engineering"]
+category: "Series"
+subcategory: "Bomb Lab"
+draft: false
+---
+Bomb lab은 assembly 및 computer system을 공부를 하는데 도움이 되는 project다. 기본적으로 bomb lab을 수행하는데 하나의 binary가 주어지는데 해당 binary는 `bomb`라는 이름으로 되어있다. 참고로 해당 binary는 x86 machine에서 돌아가도록 build 되어있다. 즉, 위 project는 assembly를 분석해 문제 없이 해당 binary를 끝까지 수행하는게 목표다.
+
+## bomb 파일 분석
+
+우선 `main` 함수부터 breakpoint를 지정해서 disassemble 해보면 다음과 같다.
+
+```
+(gdb) disassemble main
+Dump of assembler code for function main:
+   0x0000000000001449 <+0>:     endbr64
+   0x000000000000144d <+4>:     push   %rbx
+   0x000000000000144e <+5>:     cmp    $0x1,%edi
+   0x0000000000001451 <+8>:     je     0x154f <main+262>
+   0x0000000000001457 <+14>:    mov    %rsi,%rbx
+   0x000000000000145a <+17>:    cmp    $0x2,%edi
+   0x000000000000145d <+20>:    jne    0x1584 <main+315>
+   0x0000000000001463 <+26>:    mov    0x8(%rsi),%rdi
+   0x0000000000001467 <+30>:    lea    0x1b96(%rip),%rsi        # 0x3004
+   0x000000000000146e <+37>:    callq  0x12e0 <fopen@plt>
+   0x0000000000001473 <+42>:    mov    %rax,0x421e(%rip)        # 0x5698 <infile>
+   0x000000000000147a <+49>:    test   %rax,%rax
+   0x000000000000147d <+52>:    je     0x1562 <main+281>
+   0x0000000000001483 <+58>:    callq  0x1b34 <initialize_bomb>
+   0x0000000000001488 <+63>:    lea    0x1bf9(%rip),%rdi        # 0x3088
+   0x000000000000148f <+70>:    callq  0x1200 <puts@plt>
+   0x0000000000001494 <+75>:    lea    0x1c2d(%rip),%rdi        # 0x30c8
+   0x000000000000149b <+82>:    callq  0x1200 <puts@plt>
+   0x00000000000014a0 <+87>:    callq  0x1c59 <read_line>
+   0x00000000000014a5 <+92>:    mov    %rax,%rdi
+   0x00000000000014a8 <+95>:    callq  0x15a7 <phase_1>
+   0x00000000000014ad <+100>:   callq  0x1da1 <phase_defused>
+   0x00000000000014b2 <+105>:   lea    0x1c3f(%rip),%rdi        # 0x30f8
+   0x00000000000014b9 <+112>:   callq  0x1200 <puts@plt>
+   0x00000000000014be <+117>:   callq  0x1c59 <read_line>
+   0x00000000000014c3 <+122>:   mov    %rax,%rdi
+   0x00000000000014c6 <+125>:   callq  0x15cb <phase_2>
+   0x00000000000014cb <+130>:   callq  0x1da1 <phase_defused>
+   0x00000000000014d0 <+135>:   lea    0x1b66(%rip),%rdi        # 0x303d
+   0x00000000000014d7 <+142>:   callq  0x1200 <puts@plt>
+   0x00000000000014dc <+147>:   callq  0x1c59 <read_line>
+   0x00000000000014e1 <+152>:   mov    %rax,%rdi
+   0x00000000000014e4 <+155>:   callq  0x1639 <phase_3>
+   0x00000000000014e9 <+160>:   callq  0x1da1 <phase_defused>
+   0x00000000000014ee <+165>:   lea    0x1b66(%rip),%rdi        # 0x305b
+   0x00000000000014f5 <+172>:   callq  0x1200 <puts@plt>
+   0x00000000000014fa <+177>:   callq  0x1c59 <read_line>
+   0x00000000000014ff <+182>:   mov    %rax,%rdi
+   0x0000000000001502 <+185>:   callq  0x1760 <phase_4>
+   0x0000000000001507 <+190>:   callq  0x1da1 <phase_defused>
+   0x000000000000150c <+195>:   lea    0x1c15(%rip),%rdi        # 0x3128
+   0x0000000000001513 <+202>:   callq  0x1200 <puts@plt>
+   0x0000000000001518 <+207>:   callq  0x1c59 <read_line>
+   0x000000000000151d <+212>:   mov    %rax,%rdi
+   0x0000000000001520 <+215>:   callq  0x17d9 <phase_5>
+   0x0000000000001525 <+220>:   callq  0x1da1 <phase_defused>
+   0x000000000000152a <+225>:   lea    0x1b39(%rip),%rdi        # 0x306a
+   0x0000000000001531 <+232>:   callq  0x1200 <puts@plt>
+   0x0000000000001536 <+237>:   callq  0x1c59 <read_line>
+   0x000000000000153b <+242>:   mov    %rax,%rdi
+   0x000000000000153e <+245>:   callq  0x1825 <phase_6>
+   0x0000000000001543 <+250>:   callq  0x1da1 <phase_defused>
+   0x0000000000001548 <+255>:   mov    $0x0,%eax
+   0x000000000000154d <+260>:   pop    %rbx
+   0x000000000000154e <+261>:   retq
+   0x000000000000154f <+262>:   mov    0x411a(%rip),%rax        # 0x5670 <stdin@@GLIBC_2.2.5>
+   0x0000000000001556 <+269>:   mov    %rax,0x413b(%rip)        # 0x5698 <infile>
+   0x000000000000155d <+276>:   jmpq   0x1483 <main+58>
+   0x0000000000001562 <+281>:   mov    0x8(%rbx),%rcx
+   0x0000000000001566 <+285>:   mov    (%rbx),%rdx
+   0x0000000000001569 <+288>:   lea    0x1a96(%rip),%rsi        # 0x3006
+   0x0000000000001570 <+295>:   mov    $0x1,%edi
+   0x0000000000001575 <+300>:   callq  0x12d0 <__printf_chk@plt>
+   0x000000000000157a <+305>:   mov    $0x8,%edi
+   0x000000000000157f <+310>:   callq  0x12f0 <exit@plt>
+   0x0000000000001584 <+315>:   mov    (%rsi),%rdx
+   0x0000000000001587 <+318>:   lea    0x1a95(%rip),%rsi        # 0x3023
+   0x000000000000158e <+325>:   mov    $0x1,%edi
+   0x0000000000001593 <+330>:   mov    $0x0,%eax
+   0x0000000000001598 <+335>:   callq  0x12d0 <__printf_chk@plt>
+   0x000000000000159d <+340>:   mov    $0x8,%edi
+   0x00000000000015a2 <+345>:   callq  0x12f0 <exit@plt>
+End of assembler dump.
+```
+
+꺽쇄 `&lt;function&gt;`으로 된 부분은 function 이름을 나타내기 때문에 보면 크게 다음과 같은 함수들로 구성된다.
+
+- initialize_bomb
+- read_line
+- phase_1
+- phase_2
+- phase_3
+- phase_4
+- phase_5
+- phase_6
+- phase_defused
+
+## phase 1
+
+Phase 1을 해결하기 위해서 우선 그냥 수행해보면 다음과 같이 출력이 된다.
+
+```
+$ ./bomb
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+```
+
+그리고 임의의 문자열을 입력하면 폭탄이 터지는 것을 볼 수 있다.
+
+```
+$ ./bomb
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+hello world
+
+BOOM!!!
+The bomb has blown up.
+```
+
+이제 phase 1을 풀기 위해 `main` function code를 분석해보면, `phase_1` 수행전에 입력을 받기 위해 `read_line` 함수가 호출되는 것을 볼 수 있다. `read_line` 함수도 분석하면 분석 할 수 있겠지만, 우리가 위 과제에서 분석하고자 하는 함수는 `phase_1`이니 넘어가자.
+
+```
+(gdb) disas phase_1
+Dump of assembler code for function phase_1:
+   0x00000000000015a7 <+0>:     endbr64
+   0x00000000000015ab <+4>:     sub    $0x8,%rsp
+   0x00000000000015af <+8>:     lea    0x1b9a(%rip),%rsi        # 0x3150
+   0x00000000000015b6 <+15>:    callq  0x1ad4 <strings_not_equal>
+   0x00000000000015bb <+20>:    test   %eax,%eax
+   0x00000000000015bd <+22>:    jne    0x15c4 <phase_1+29>
+   0x00000000000015bf <+24>:    add    $0x8,%rsp
+   0x00000000000015c3 <+28>:    retq
+   0x00000000000015c4 <+29>:    callq  0x1be8 <explode_bomb>
+   0x00000000000015c9 <+34>:    jmp    0x15bf <phase_1+24>
+End of assembler dump.
+```
+
+위 코드를 보면 `&lt;+15&gt;`에서 `strings_not_equal` 함수를 호출하는 것을 볼 수 있는데, 이름을 통해 어떤 문자열을 비교하는 것을 유추할 수 있다.
+
+그리고 `test %eax,%eax` 명령어를 통해 condition code를 업데이트하고 `%eax`, 즉 return value가 저장된 register의 값을 보고 `1`인 경우 `&lt;phase_1+29&gt;`로 뛰어 `explode_bomb` 함수로 건너뛰어 폭탄이 터지는 구조임을 분석 할 수 있다.
+
+```
+(gdb) disassemble strings_not_equal
+Dump of assembler code for function strings_not_equal:
+   0x0000555555555ad4 <+0>:     endbr64
+   0x0000555555555ad8 <+4>:     push   %r12
+   0x0000555555555ada <+6>:     push   %rbp
+   0x0000555555555adb <+7>:     push   %rbx
+   0x0000555555555adc <+8>:     mov    %rdi,%rbx
+   0x0000555555555adf <+11>:    mov    %rsi,%rbp
+   0x0000555555555ae2 <+14>:    callq  0x555555555ab3 <string_length>
+   0x0000555555555ae7 <+19>:    mov    %eax,%r12d
+   0x0000555555555aea <+22>:    mov    %rbp,%rdi
+   0x0000555555555aed <+25>:    callq  0x555555555ab3 <string_length>
+   0x0000555555555af2 <+30>:    mov    %eax,%edx
+   0x0000555555555af4 <+32>:    mov    $0x1,%eax
+   0x0000555555555af9 <+37>:    cmp    %edx,%r12d
+   0x0000555555555afc <+40>:    jne    0x555555555b2f <strings_not_equal+91>
+   0x0000555555555afe <+42>:    movzbl (%rbx),%edx
+   0x0000555555555b01 <+45>:    test   %dl,%dl
+   0x0000555555555b03 <+47>:    je     0x555555555b23 <strings_not_equal+79>
+   0x0000555555555b05 <+49>:    mov    $0x0,%eax
+   0x0000555555555b0a <+54>:    cmp    %dl,0x0(%rbp,%rax,1)
+   0x0000555555555b0e <+58>:    jne    0x555555555b2a <strings_not_equal+86>
+   0x0000555555555b10 <+60>:    add    $0x1,%rax
+   0x0000555555555b14 <+64>:    movzbl (%rbx,%rax,1),%edx
+   0x0000555555555b18 <+68>:    test   %dl,%dl
+   0x0000555555555b1a <+70>:    jne    0x555555555b0a <strings_not_equal+54>
+   0x0000555555555b1c <+72>:    mov    $0x0,%eax
+   0x0000555555555b21 <+77>:    jmp    0x555555555b2f <strings_not_equal+91>
+   0x0000555555555b23 <+79>:    mov    $0x0,%eax
+   0x0000555555555b28 <+84>:    jmp    0x555555555b2f <strings_not_equal+91>
+   0x0000555555555b2a <+86>:    mov    $0x1,%eax
+   0x0000555555555b2f <+91>:    pop    %rbx
+   0x0000555555555b30 <+92>:    pop    %rbp
+   0x0000555555555b31 <+93>:    pop    %r12
+   0x0000555555555b33 <+95>:    retq
+End of assembler dump.
+```
+
+하나하나 보는 것보다 핵심적인 부분을 유추해서 찾아보자면, `&lt;+8&gt;`과 `&lt;+11&gt;`에서 `$rdi`, `$rsi` register에 있는 값을 각각 다른 register로 옮겨서 `string_length`를 통해 문자열 길이 비교를 하는 것을 볼 수 있다. 그리고 나온 결과를 `&lt;+37&gt;`에서 비교해서 다른 경우 바로 함수를 빠져 나오는 방식으로 flow가 되어있다.
+
+만약 같은 경우 건너뛰고 `&lt;+42&gt;`에서 어떤 주소의 값을 `$edx`에 저장하는 것을 볼 수 있는데, 이게 사실 우리가 처음 입력한 문자열의 가장 처음 있는 character value다.
+
+그리고 `&lt;+54&gt;`에서 우리가 읽은 첫 문자가 저장된 `$dl` register값과 기존에 solution의 address가 저장된 `$rbp`를 indexing (`$rax`)해서 얻은 값과 비교를 한다. 그리고 같은 경우 `&lt;+60&gt;`에서 index를 증가시켜 looping을 통해 계속해서 문자열을 비교해나가서 최종적으로 문자열이 모두 동일할 경우 `&lt;+72&gt;`으로 가서 `$eax`에 `0`이 저장되어 phase_1을 통과 할 수 있게 된다.
+
+사실 문자 하나하나를 보지 않고도 `strings_not_equal` 함수를 분석하지 않고 정답을 알 수 있는데, 보통 x86 architecture의 경우 함수 인자 전달을 위해서 `$rdi`, `$rsi` register를 많이 사용한다. 그래서 우리가 read_line을 통해 우리의 입력을 받고 난 뒤에 `phase_1`으로 인자를 전달하기 위해 다음 명령어를 통해 `$rdi`로 값을 저장한 것을 볼 수 있다.
+
+```
+<+92>:    mov    %rax,%rdi
+```
+
+그래서 `strings_not_equal` 함수 이전에 `&lt;+8&gt;: lea 0x1b9a(%rip),%rsi` 명령어를 통해 특정 address에 저장된 값을 `$rsi` register에 불러오는 것을 볼 수 있다. 위 명령어가 수행된 직후 `$rsi`에 저장된 값을 확인해보면 다음과 같다.
+
+```
+(gdb) x/s $rsi
+0x555555557150: "Brownie, you are doing a heck of a job."
+```
+
+따라서 위 결과를 토대로 입력을 해보면 phase 1을 통과하는 것을 볼 수 있다.
+
+```
+$ ./bomb
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+Brownie, you are doing a heck of a job.
+Phase 1 defused. How about the next one?
+```
+
+## Reference
+
+1. https://if100.tistory.com/2
+2. https://pvcstillingradschool.github.io/miniWiki/programming/csapp/labs/bomb/
+3. https://github.com/im-d-team/Dev-Docs/blob/master/CS/Bomb-Lab(1).md
