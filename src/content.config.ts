@@ -9,6 +9,7 @@ const posts = defineCollection({
     description: z.string(),
     tags: z.array(z.string()).default([]),
     category: z.enum(['AI', 'Computer Architecture', 'Programming', 'Digital Logic', 'NAS', 'Series']).optional(),
+    subcategory: z.string().optional(),
     draft: z.boolean().default(false),
     cover: z.string().optional(),
   }),

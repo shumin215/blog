@@ -20,6 +20,14 @@ const postsByCategory = Object.fromEntries(
   categories.map((cat) => [cat.id, allPosts.filter((p) => p.data.category === cat.id)])
 );
 
+const seriesSubcategories = Object.entries(
+  postsByCategory.Series.reduce<Record<string, number>>((acc, post) => {
+    const subcategory = post.data.subcategory ?? 'General';
+    acc[subcategory] = (acc[subcategory] ?? 0) + 1;
+    return acc;
+  }, {})
+).sort((a, b) => b[1] - a[1]);
+
 const colorMap = {
   blue:   { badge: 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',   dot: 'bg-blue-500' },
   purple: { badge: 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300', dot: 'bg-purple-500' },
@@ -67,6 +75,22 @@ const colorMap = {
                   </span>
                   <span class="text-xs text-gray-400">{postsByCategory[cat.id].length}</span>
                 </button>
+                {cat.id === 'Series' && seriesSubcategories.length > 0 && (
+                  <ul class="mt-1 ml-4 space-y-0.5 border-l border-gray-100 dark:border-gray-800 pl-3">
+                    {seriesSubcategories.map(([subcategory, count]) => (
+                      <li>
+                        <button
+                          data-category="Series"
+                          data-subcategory={subcategory}
+                          class="category-btn w-full text-left text-xs px-3 py-1.5 rounded-md transition-colors text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between gap-2"
+                        >
+                          <span>{subcategory}</span>
+                          <span class="text-xs text-gray-400">{count}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             );
           })}
@@ -105,6 +129,7 @@ const colorMap = {
           return (
             <article
               data-category={post.data.category ?? ''}
+              data-subcategory={post.data.subcategory ?? ''}
               class="post-card group flex flex-col rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm transition-all"
             >
               <div class="flex items-start justify-between gap-2 mb-3">
@@ -152,9 +177,9 @@ const colorMap = {
   const cards = document.querySelectorAll<HTMLElement>('.post-card');
   const emptyState = document.getElementById('empty-state');
 
-  function activate(category: string) {
+  function activate(category: string, subcategory = '') {
     buttons.forEach((btn) => {
-      const isActive = btn.dataset.category === category;
+      const isActive = btn.dataset.category === category && (btn.dataset.subcategory ?? '') === subcategory;
       btn.classList.toggle('font-semibold', isActive);
       btn.classList.toggle('text-gray-900', isActive);
       btn.classList.toggle('dark:text-gray-100', isActive);
@@ -164,7 +189,9 @@ const colorMap = {
 
     let visible = 0;
     cards.forEach((card) => {
-      const match = category === 'all' || card.dataset.category === category;
+      const match =
+        category === 'all' ||
+        (card.dataset.category === category && (!subcategory || card.dataset.subcategory === subcategory));
       card.classList.toggle('hidden', !match);
       if (match) visible++;
     });
@@ -172,14 +199,16 @@ const colorMap = {
     emptyState?.classList.toggle('hidden', visible > 0);
   }
 
-  const initialCategory = location.hash.replace('#', '') || 'all';
-  activate(initialCategory);
+  const [initialCategory, initialSubcategory = ''] = decodeURIComponent(location.hash.replace('#', '')).split('/');
+  activate(initialCategory || 'all', initialSubcategory);
 
   buttons.forEach((btn) => {
     btn.addEventListener('click', () => {
       const cat = btn.dataset.category ?? 'all';
-      history.replaceState(null, '', cat === 'all' ? location.pathname : `#${cat}`);
-      activate(cat);
+      const subcategory = btn.dataset.subcategory ?? '';
+      const hash = subcategory ? `${cat}/${subcategory}` : cat;
+      history.replaceState(null, '', cat === 'all' ? location.pathname : `#${encodeURIComponent(hash)}`);
+      activate(cat, subcategory);
     });
   });
 </script>
