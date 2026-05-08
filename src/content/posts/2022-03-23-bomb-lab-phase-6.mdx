@@ -1,0 +1,254 @@
+---
+title: "[Bomb Lab] Phase 6"
+date: 2022-03-23
+description: "(gdb) disassemble phase_6 Dump of assembler code for function phase_6: 0x0000000000001825 &lt;+0&gt;: endbr64 0x0000000000001829 &lt;+4&gt;: push %r15 0x000000..."
+tags: ["series", "reverse-engineering", "phase-6"]
+category: "Series"
+subcategory: "Bomb Lab"
+draft: false
+---
+```
+(gdb) disassemble phase_6
+Dump of assembler code for function phase_6:
+   0x0000000000001825 <+0>:     endbr64
+   0x0000000000001829 <+4>:     push   %r15
+   0x000000000000182b <+6>:     push   %r14
+   0x000000000000182d <+8>:     push   %r13
+   0x000000000000182f <+10>:    push   %r12
+   0x0000000000001831 <+12>:    push   %rbp
+   0x0000000000001832 <+13>:    push   %rbx
+   0x0000000000001833 <+14>:    sub    $0x68,%rsp
+   0x0000000000001837 <+18>:    mov    %fs:0x28,%rax
+   0x0000000000001840 <+27>:    mov    %rax,0x58(%rsp)
+   0x0000000000001845 <+32>:    xor    %eax,%eax
+   0x0000000000001847 <+34>:    mov    %rsp,%r14
+   0x000000000000184a <+37>:    mov    %r14,%rsi
+   0x000000000000184d <+40>:    callq  0x1c14 <read_six_numbers>
+   0x0000000000001852 <+45>:    mov    %r14,%r12
+   0x0000000000001855 <+48>:    mov    $0x1,%r15d
+   0x000000000000185b <+54>:    mov    %rsp,%r13
+   0x000000000000185e <+57>:    jmpq   0x1924 <phase_6+255>
+   0x0000000000001863 <+62>:    callq  0x1be8 <explode_bomb>
+   0x0000000000001868 <+67>:    jmpq   0x1936 <phase_6+273>
+   0x000000000000186d <+72>:    callq  0x1be8 <explode_bomb>
+   0x0000000000001872 <+77>:    add    $0x1,%rbx
+   0x0000000000001876 <+81>:    cmp    $0x5,%ebx
+   0x0000000000001879 <+84>:    jg     0x191c <phase_6+247>
+   0x000000000000187f <+90>:    mov    0x0(%r13,%rbx,4),%eax
+   0x0000000000001884 <+95>:    cmp    %eax,0x0(%rbp)
+   0x0000000000001887 <+98>:    jne    0x1872 <phase_6+77>
+   0x0000000000001889 <+100>:   jmp    0x186d <phase_6+72>
+   0x000000000000188b <+102>:   lea    0x18(%r12),%rcx
+   0x0000000000001890 <+107>:   mov    $0x7,%edx
+   0x0000000000001895 <+112>:   mov    %edx,%eax
+   0x0000000000001897 <+114>:   sub    (%r12),%eax
+   0x000000000000189b <+118>:   mov    %eax,(%r12)
+   0x000000000000189f <+122>:   add    $0x4,%r12
+   0x00000000000018a3 <+126>:   cmp    %r12,%rcx
+   0x00000000000018a6 <+129>:   jne    0x1895 <phase_6+112>
+   0x00000000000018a8 <+131>:   mov    $0x0,%esi
+   0x00000000000018ad <+136>:   mov    (%rsp,%rsi,4),%ecx
+   0x00000000000018b0 <+139>:   mov    $0x1,%eax
+   0x00000000000018b5 <+144>:   lea    0x3944(%rip),%rdx        # 0x555555559200 <node1>
+   0x00000000000018bc <+151>:   cmp    $0x1,%ecx
+   0x00000000000018bf <+154>:   jle    0x18cc <phase_6+167>
+   0x00000000000018c1 <+156>:   mov    0x8(%rdx),%rdx
+   0x00000000000018c5 <+160>:   add    $0x1,%eax
+   0x00000000000018c8 <+163>:   cmp    %ecx,%eax
+   0x00000000000018ca <+165>:   jne    0x18c1 <phase_6+156>
+   0x00000000000018cc <+167>:   mov    %rdx,0x20(%rsp,%rsi,8)
+   0x00000000000018d1 <+172>:   add    $0x1,%rsi
+   0x00000000000018d5 <+176>:   cmp    $0x6,%rsi
+   0x00000000000018d9 <+180>:   jne    0x18ad <phase_6+136>
+   0x00000000000018db <+182>:   mov    0x20(%rsp),%rbx
+   0x00000000000018e0 <+187>:   mov    0x28(%rsp),%rax
+   0x00000000000018e5 <+192>:   mov    %rax,0x8(%rbx)
+   0x00000000000018e9 <+196>:   mov    0x30(%rsp),%rdx
+   0x00000000000018ee <+201>:   mov    %rdx,0x8(%rax)
+   0x00000000000018f2 <+205>:   mov    0x38(%rsp),%rax
+   0x00000000000018f7 <+210>:   mov    %rax,0x8(%rdx)
+   0x00000000000018fb <+214>:   mov    0x40(%rsp),%rdx
+   0x0000000000001900 <+219>:   mov    %rdx,0x8(%rax)
+   0x0000000000001904 <+223>:   mov    0x48(%rsp),%rax
+   0x0000000000001909 <+228>:   mov    %rax,0x8(%rdx)
+   0x000000000000190d <+232>:   movq   $0x0,0x8(%rax)
+   0x0000000000001915 <+240>:   mov    $0x5,%ebp
+   0x000000000000191a <+245>:   jmp    0x1951 <phase_6+300>
+   0x000000000000191c <+247>:   add    $0x1,%r15
+   0x0000000000001920 <+251>:   add    $0x4,%r14
+   0x0000000000001924 <+255>:   mov    %r14,%rbp
+   0x0000000000001927 <+258>:   mov    (%r14),%eax
+   0x000000000000192a <+261>:   sub    $0x1,%eax
+   0x000000000000192d <+264>:   cmp    $0x5,%eax
+   0x0000000000001930 <+267>:   ja     0x1863 <phase_6+62>
+   0x0000000000001936 <+273>:   cmp    $0x5,%r15d
+   0x000000000000193a <+277>:   jg     0x188b <phase_6+102>
+   0x0000000000001940 <+283>:   mov    %r15,%rbx
+   0x0000000000001943 <+286>:   jmpq   0x187f <phase_6+90>
+   0x0000000000001948 <+291>:   mov    0x8(%rbx),%rbx
+   0x000000000000194c <+295>:   sub    $0x1,%ebp
+   0x000000000000194f <+298>:   je     0x1962 <phase_6+317>
+   0x0000000000001951 <+300>:   mov    0x8(%rbx),%rax
+   0x0000000000001955 <+304>:   mov    (%rax),%eax
+   0x0000000000001957 <+306>:   cmp    %eax,(%rbx)
+   0x0000000000001959 <+308>:   jge    0x1948 <phase_6+291>
+   0x000000000000195b <+310>:   callq  0x1be8 <explode_bomb>
+   0x0000000000001960 <+315>:   jmp    0x1948 <phase_6+291>
+   0x0000000000001962 <+317>:   mov    0x58(%rsp),%rax
+   0x0000000000001967 <+322>:   xor    %fs:0x28,%rax
+   0x0000000000001970 <+331>:   jne    0x1981 <phase_6+348>
+   0x0000000000001972 <+333>:   add    $0x68,%rsp
+   0x0000000000001976 <+337>:   pop    %rbx
+   0x0000000000001977 <+338>:   pop    %rbp
+   0x0000000000001978 <+339>:   pop    %r12
+   0x000000000000197a <+341>:   pop    %r13
+   0x000000000000197c <+343>:   pop    %r14
+   0x000000000000197e <+345>:   pop    %r15
+   0x0000000000001980 <+347>:   retq
+   0x0000000000001981 <+348>:   callq  0x1220 <__stack_chk_fail@plt>
+End of assembler dump.
+```
+
+Phase 6는 마지막 단계인만큼 assembly code가 길다. 바로 본론으로 들어가자면 `&lt;+40&gt;`에서 `&lt;read_six_numbers&gt;` 함수 이름으로 유추해볼 때 6개의 정수가 필요해 보인다.
+
+<ImageCaption src="/images/posts/bomb-lab-phase-6/image-17-1024x634.png" alt="" caption="phase_6 호출 직후 register 및 stack information" />
+
+위 그림은 `phase_6` 수행 직후 register 및 stack information을 보여준다. 우리가 임시로 입력한 문자열들은 `$rax`가 가지는 주소에 저장되어 있다.  
+함수 수행 직후 assembly를 보면, 각종 register의 임시 값들을 stack에 저장하고 stack pointer를 변경하면서 stack memory 영역을 할당하는 것을 볼 수 있다.
+
+<ImageCaption src="/images/posts/bomb-lab-phase-6/image-19-1024x600.png" alt="" caption="<+57> 수행 직전 register 및 stack information" />
+
+위 코드에서 `&lt;read_six_numbers&gt;`를 호출하기 전에 `$rsi` register로 `$rsp`의 값을 전달하게 되는데, 이 때 아마도 우리가 입력한 문자열 값을 정수로 변환하여 읽을 수 있도록 stack에 저장해주는 것으로 보인다.
+
+```
+(gdb) x/s $r14
+0x7fffffffe2f0: "\001"
+0x7fffffffe2f2: ""
+0x7fffffffe2f3: ""
+0x7fffffffe2f4: "\002"
+0x7fffffffe2f6: ""
+0x7fffffffe2f7: ""
+0x7fffffffe2f8: "\003"
+0x7fffffffe2fa: ""
+0x7fffffffe2fb: ""
+0x7fffffffe2fc: "\004"
+0x7fffffffe2fe: ""
+0x7fffffffe2ff: ""
+0x7fffffffe300: "\005"
+0x7fffffffe302: ""
+0x7fffffffe303: ""
+0x7fffffffe304: "\006"
+0x7fffffffe306: ""
+0x7fffffffe307: ""
+0x7fffffffe308: ""
+```
+
+`&lt;read_six_numbers&gt;` 수행 후 `$r14`가 가지는 address (`0x7fffffffe2f0`)를 접근해보면 우리가 입력했던 값이 보이는 것을 확인 할 수 있다.
+
+`&lt;+264&gt;`에서 우리가 처음 입력한 값이 들어있는 `$eax`와 `0x5`를 비교하는 부분이 있는데, 만약 `0x5`보다 큰 경우 폭탄이 터지도록 되어있다. 따라서 **첫 번째 인자의 값은 5보다 작은 값이여야한다.**
+
+그리고 `&lt;+247&gt;`에서 `$r15`로 `0x1`을 복사하고, `$r15`의 값을 `$rbx`에 복사하는데 어떤 looping 동작을 위한 index 값으로 사용될 것으로 예측해본다. `&lt;phase_6+90&gt;`에 가면 base address (`$r13`)을 기준으로 offset access를 하는 모습을 예측 해볼 수 있다. 실제 결과는 우리의 두 번째 인자의 값이 저장되었다.
+
+```
+(gdb) p $eax
+$1 = 2
+```
+
+그리고 `&lt;+77&gt;`과 `&lt;+81&gt;`에서 `$rbx`에 1을 더하고 `0x5`와 비교하는 걸로 봐서 이런 동작을 5번을 더 수행 할 것으로 예측된다. 그래서 모든 인자의 값이 0이 아닌지를 확인하는 동작이 이뤄지는데 결론적으로 **우리의 입력한 값이 0보다는 큰 수여야 한다.**
+
+그리고 다시 `&lt;phase_6+247&gt;`로 이동해서 우리의 입력한 값이 저장된 위치를 가리키는 `$r14`의 값을 4 증가시키는데, 이렇게 되면 두 번째 입력한 값인 `2`를 가리키게 된다.
+
+```
+(gdb) x/x $r14
+0x7fffffffe2f4: 0x02
+```
+
+그리고 나서 두 번째 값을 1을 빼고 5보다 큰 값이면 폭탄이 터지게 되기 때문에 6 이하의 값이여야 폭탄이 터지지 않는다.
+
+<ImageCaption src="/images/posts/bomb-lab-phase-6/image-20-1024x581.png" alt="" caption="<phase_6+95> 수행 직전 register 및 stack information" />
+
+그리고 `&lt;phase_6+90&gt;`으로 이동해 세 번째 입력한 값을 `$rbx` = `2`를 통해 offset을 통한 접근을 하게 되면 `$eax`에는 세 번째 입력한 값인 3이 들어가게 된다.  
+그리하여 `&lt;+95&gt;`에선 세 번째 입력한 값부터 마지막까지 두 번째 입력한 값이 저장된 `0x0($rbp)`의 값과 비교해서 같으면 폭탄이 터지도록 되어있다. 따라서 **어떠한 값도 동일한 값이 포함 되어선 안된다는 조건이 들어있는 것이다.**
+
+`&lt;+247&gt;`에서 `$r15`를 한번 더 증가시키고 `$r14`도 4만큼 증가시켜 세 번째 입력한 값을 가리키도록 한다. `$eax`에는 세 번째 입력한 값인 3이 저장되고, 위 동작을 `$r15d`가 `0x5`보다 클 때까지 반복해서 `&lt;phase_6+102&gt;`로 빠져나가는 동작이 `&lt;+277&gt;`에 나와있다.
+
+`&lt;+107&gt;`부터 보면 `0x7`을 첫 번째 인자의 값과 뺄셈을 한 뒤 첫 번째 입력한 값이 저장된 위치 `$r12`에 저장한다. 그리고 `$r12`를 4만큼 증가시켜 `$rcx` (우리가 입력한 6개의 숫자가 저장된 위치 바로 위 address를 저장하는 register)와 비교한다. 즉 **모든 입력한 각각의 값을 7에서 빼는 동작을 반복한다.**
+
+<ImageCaption src="/images/posts/bomb-lab-phase-6/image-21-1024x581.png" alt="" caption="<phase_6+136> 직전 register 및 stack information" />
+
+&lt;phase_6+136&gt; 직전까지 결과를 보면 위 그림과 같다.
+
+이제 $eax가 $ecx와 같은 값이 나올 때까지 $rdx의 값을 업데이트하는 것을 볼 수 있다. $eax에는 0x1이 저장되어 있다. 그리고 $ecx에는 우리의 첫 번째 입력한 값의 계산된 값인 0x6이 저장되어 있다. 따라서 총 5번의 loop이 수행되어 `$rdx`의 값이 `0x555555559110`가 된다. 참고로 이는 node5라는 함수에 저장되어 있는 값이다.
+
+```
+(gdb) x/wx 0x555555559200
+0x555555559200 <node1>:         0x00000336
+0x555555559204 <node1+4>:       0x00000001
+0x555555559208 <node1+8>:       0x55559210
+0x55555555920c <node1+12>:      0x00005555
+0x555555559210 <node2>:         0x00000113
+0x555555559214 <node2+4>:       0x00000002
+0x555555559218 <node2+8>:       0x55559220
+0x55555555921c <node2+12>:      0x00005555
+0x555555559220 <node3>:         0x00000084
+0x555555559224 <node3+4>:       0x00000003
+0x555555559228 <node3+8>:       0x55559230
+0x55555555922c <node3+12>:      0x00005555
+0x555555559230 <node4>:         0x000002a5
+0x555555559234 <node4+4>:       0x00000004
+0x555555559238 <node4+8>:       0x55559240
+0x55555555923c <node4+12>:      0x00005555
+0x555555559240 <node5>:         0x0000010f
+0x555555559244 <node5+4>:       0x00000005
+0x555555559248 <node5+8>:       0x55559110
+0x55555555924c <node5+12>:      0x00005555
+0x555555559250: 0x00000000
+0x555555559254: 0x00000000
+```
+
+| Memory address | Node | Address | Index | Value | Input value |
+| --- | --- | --- | --- | --- | --- |
+| 0x00005555_55559200 | node1 | 0x00005555_55559210 | 1 | 0x336 | 6 |
+| 0x00005555_55559210 | node2 | 0x00005555_55559220 | 2 | 0x113 | 5 |
+| 0x00005555_55559220 | node3 | 0x00005555_55559230 | 3 | 0x84 | 4 |
+| 0x00005555_55559230 | node4 | 0x00005555_55559240 | 4 | 0x2a5 | 3 |
+| 0x00005555_55559240 | node5 | 0x00005555_55559110 | 5 | 0x10f | 2 |
+| 0x00005555_55559110 | node6 | 0x00000000_00000000 | 6 | 0x8f | 1 |
+
+위는 `&lt;phase_6+144&gt;`를 통해 나온 `$rdx`에 저장된 주소값을 기준으로 출력해본 결과다. 각 node별로 어떤 address, index, value가 저장된 모습을 위 표와 같이 유추 해볼 수 있다.
+
+위 결과를 토대로 만약 우리가 입력한 값이 6으로 됐다고 하면 `node5`의 주소가, 5가 됐다고 하면 `node4`의 주소가 memory `0x7fffffffe310`에 8씩 더하면서 순차적으로 저장되는 것을 볼 수 있었다.
+
+위 연산이 완료되면 `&lt;+182&gt;`부터 우리가 저장한 결과가 위치한 주소 (`$rsp+0x20`)부터 읽어들인다.
+
+`&lt;+192&gt;`까지 명령어를 수행하게 되면, 우선 `&lt;+187&gt;`, `&lt;+192&gt;`를 통해 `node5`의 address 값을 기존에 저장된 `node6`의 address field에 새로운 값 (`0x00005555_55559240`) 이 들어가게 된다.  
+`&lt;+196&gt;`, `&lt;+201&gt;`이 수행되면 `node4`의 address가 `node5`의 address field에 저장된다.  
+`&lt;+205&gt;`, `&lt;+210&gt;`을 수행하면 `node3`의 address가 node4의 address field에 저장된다.
+
+이렇게 반복적으로 수행하게 되면 linked list의 구조를 만들게 되어 아래와 같은 표를 구성 할 수 있다.
+
+| Memory address | Node | Address | Index | Value | Input value |
+| --- | --- | --- | --- | --- | --- |
+| 0x00005555_55559200 | node1 | 0x00000000_00000000 | 1 | 0x336 | 6 |
+| 0x00005555_55559210 | node2 | 0x00005555_55559200 | 2 | 0x113 | 5 |
+| 0x00005555_55559220 | node3 | 0x00005555_55559210 | 3 | 0x84 | 4 |
+| 0x00005555_55559230 | node4 | 0x00005555_55559220 | 4 | 0x2a5 | 3 |
+| 0x00005555_55559240 | node5 | 0x00005555_55559230 | 5 | 0x10f | 2 |
+| 0x00005555_55559110 | node6 | 0x00005555_55559240 | 6 | 0x8f | 1 |
+
+그리고 이제 &lt;phase_6+300&gt;으로 이동해서 우리가 처음 입력한 값이 재계산되어 6이 됐는데, 이를 index삼아 생성된 address인 node6의 주소를 $rbx에 저장하고 있다. (이는 &lt;+182&gt;에서 미리 저장해뒀다.) 그 결과로, next node의 value (0x10f)와 현재 node의 value (0x8f)를 비교해 현재의 node value가 더 크지 않게 되면 폭탄이 터지게 된다. 즉, **node의 value의 내림차순으로 정렬이 된지를 확인하는 코드가 존재한다.**
+
+따라서 여태 분석한 결과를 바탕으로 정답은 `6 3 5 2 1 4` 가 된다.
+
+```
+$ ./bomb solution.txt
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+Phase 1 defused. How about the next one?
+That's number 2.  Keep going!
+Halfway there!
+So you got that one.  Try this one.
+Good work!  On to the next...
+6 3 5 2 1 4
+Congratulations! You've defused the bomb!
+```
